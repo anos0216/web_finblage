@@ -9,7 +9,16 @@ const Footer = () => {
   // Dynamically get the link groups from your menu data
   const insightsMenu = groupedMenus.find(m => m.name === "Insights")?.subMenus || [];
   const companyMenu = groupedMenus.find(m => m.name === "Company")?.subMenus || [];
-  const mainLinks = groupedMenus.filter(m => m.path) || []; // News, Services, Blogs
+
+  // FIX: Use .reduce() to filter and transform the array to the correct type
+  const mainLinks = groupedMenus.reduce((acc, menu) => {
+    if (menu.path) {
+      // This ensures we only add items that have a path,
+      // creating an array of type { name: string, path: string }[]
+      acc.push({ name: menu.name, path: menu.path });
+    }
+    return acc;
+  }, [] as { name: string; path: string }[]); // Initialize with the correct, expected type
 
   // Helper component for link lists
   const FooterLinkList: React.FC<{ title: string; links: { name: string; path: string }[] }> = ({ title, links }) => (
@@ -35,7 +44,7 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
           
-          {/* 1. Brand/Logo Section */}
+          {/* 1. Brand/Logo Section (No changes) */}
           <div className="md:col-span-2">
             <h3 className="text-2xl font-bold text-white mb-4">YourLogo</h3>
             <p className="text-gray-300 text-sm max-w-xs mb-6">
@@ -50,7 +59,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* 2. Main Links */}
+          {/* 2. Main Links (This line will now work) */}
           <FooterLinkList title="Explore" links={mainLinks} />
 
           {/* 3. Insights Links */}
@@ -62,7 +71,7 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Sub-Footer */}
+      {/* Sub-Footer (No changes) */}
       <div className="border-t border-white/10">
         <div className="container mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
           <p>&copy; {currentYear} YourLogo. All rights reserved.</p>
