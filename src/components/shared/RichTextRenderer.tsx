@@ -35,7 +35,7 @@ const NodeRenderer: React.FC<{ node: Node }> = ({ node }) => {
   switch (node.type) {
     case 'HEADING':
       const level = Math.max(1, Math.min(6, node.headingData?.level ?? 2));
-      const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+      const Tag = `h${level}` as keyof React.JSX.IntrinsicElements;
       
       const tagClasses = {
         h2: 'text-3xl font-bold mt-8 mb-4 text-primary',

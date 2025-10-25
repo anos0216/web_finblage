@@ -50,8 +50,8 @@ export type RichTextNode = {
 };
 
 export type Node = {
-  type: 'HEADING' | 'PARAGRAPH' | 'BULLETED_LIST' | 'TABLE' | 'IMAGE' | 'HTML';
-  id: string;
+type: 'HEADING' | 'PARAGRAPH' | 'BULLETED_LIST' | 'LIST_ITEM' | 'TABLE' | 'IMAGE' | 'HTML';
+  id: string;
   nodes: (Node | TextNode)[];
   headingData?: { level: number };
   imageData?: { image: { src: { id: string } }, caption?: string };
