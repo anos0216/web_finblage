@@ -1,15 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer"; // 1. Import the Footer
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const helvetica = localFont({
+  src: [
+    {
+      path: "../../public/fonts/Helvetica.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/Helvetica-Bold.ttf",
+      weight: "700",
+      style: "bold",
+    },
+  ],
+  variable: "--font-helvetica",
 });
 
 export const metadata: Metadata = {
@@ -24,10 +32,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      {/* This flex layout ensures the footer sticks to the bottom, 
+        even on pages with very little content.
+      */}
+      <body className={`${helvetica.variable} antialiased flex flex-col min-h-screen`}>
+          <Navbar />
+          {/* The main content will grow to fill the available space */}
+          <main className="flex-grow">
+            {children}
+          </main>
+          <Footer /> {/* 2. Add the Footer here */}
       </body>
     </html>
   );
