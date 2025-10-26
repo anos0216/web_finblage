@@ -21,10 +21,10 @@ const Pagination: React.FC<PaginationProps> = ({
   }
 
   return (
-    <div className="flex items-center justify-center gap-4 mt-12">
+    <div className="flex items-center justify-between gap-4 mt-12">
       <a
         href={`${basePath}?page=${prevPage}`}
-        className={`px-6 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition ${
+        className={`px-6 py-2 bg-white border border-gray-300 text-gray-700 rounded-[4px] font-medium hover:bg-gray-50 transition ${
           currentPage === 0
             ? "opacity-50 cursor-not-allowed pointer-events-none"
             : ""
@@ -39,7 +39,7 @@ const Pagination: React.FC<PaginationProps> = ({
 
       <a
         href={`${basePath}?page=${nextPage}`}
-        className={`px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-opacity-90 transition ${
+        className={`px-6 py-2 bg-primary text-white rounded-[4px] font-medium hover:bg-opacity-90 transition ${
           !hasNextPage
             ? "opacity-50 cursor-not-allowed pointer-events-none"
             : ""

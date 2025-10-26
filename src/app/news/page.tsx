@@ -2,25 +2,27 @@ import React from 'react';
 import { getNews } from '@/lib/dataService';
 import Pagination from '@/components/shared/Pagination';
 import AnimatedArticleCard from '@/components/shared/AnimatedArticleCard';
-import ListHero from '@/components/shared/ListHero'; // 1. Import the new hero
+import ListHero from '@/components/shared/ListHero';
+import FilterBar from '@/components/shared/FilterBar'; // 1. Import the new FilterBar
 
 export default async function NewsPage({ searchParams }: { searchParams: { page?: string } }) {
   const page = Number(searchParams.page) || 0;
   const { dataItems: newsData, pagingMetadata } = await getNews(page);
 
   return (
-    // 2. Wrap in a Fragment (or div)
     <>
       <ListHero 
         title="Financial News"
         subtitle="Stay updated with the latest financial news and market insights."
       />
       
-      {/* 3. Keep the main content area */}
       <div className="bg-gray-50">
-        <main className="container mx-auto px-4 py-16">
-          {/* 4. The old header is removed */}
+        
+        {/* 2. Add the FilterBar here */}
+        <FilterBar />
 
+        {/* 3. Main content is now inside a separate container */}
+        <main className="container mx-auto px-4 pb-16">
           {newsData.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {newsData.map((item) => (

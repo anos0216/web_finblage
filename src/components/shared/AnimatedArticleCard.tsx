@@ -9,6 +9,7 @@ import { NewsItem, ArticleItem } from "@/types/finblage";
 import { formatWixImage } from "@/lib/utils";
 import { Calendar, Clock } from "lucide-react";
 
+// ... (types and formatDate function are the same)
 type Item = NewsItem | ArticleItem;
 
 interface CardProps {
@@ -24,26 +25,37 @@ const formatDate = (dateString: string | undefined) => {
   });
 };
 
+
 const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      gsap.fromTo(
-        cardRef.current,
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-          ease: "power3.out",
-        }
-      );
+      const mm = gsap.matchMedia();
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // Normal Motion: Animate
+        gsap.fromTo(
+          cardRef.current,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power3.out",
+          }
+        );
+      });
+
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        // Reduced Motion: Snap
+        gsap.set(cardRef.current, { opacity: 1, y: 0 });
+      });
     },
     { scope: cardRef }
   );
 
-  // --- Handle Data Variations ---
+  // ... (rest of the component logic is the same)
   const isNews = "richtext" in item.data;
   const title = isNews
     ? (item as NewsItem).data.richtext
@@ -70,41 +82,42 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
 
   // --- RENDER NEWS CARD ---
   if (basePath === "/news") {
+    // ... (rest of the JSX is the same)
     const newsData = item.data as NewsItem["data"];
     const patternStyle = {
       backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20L0 20z' fill='%23ffffff' fill-opacity='0.07' fill-rule='evenodd'/%3E%3C/svg%3E"), linear-gradient(to bottom right, var(--primary), #000b2c)`,
       backgroundBlendMode: "overlay",
     };
     return (
-      <div ref={cardRef} className="opacity-0 h-full">
+      <div ref={cardRef} className="opacity-0 h-full"> {/* GSAP targets this */}
         <LoadingLink
           href={`${basePath}/${slug}`}
           className=" group bg-white rounded-[4px] shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden h-full flex flex-col"
         >
-          {/* Top Blue Part - Styled like the image */}
+          {/* ... card content ... */}
           <div
             className="relative p-4 text-white min-h-[160px] flex flex-col justify-between"
             style={patternStyle}
           >
             <div>
               {newsData.category && (
-                <span className="inline-block bg-white/10 backdrop-blur-sm text-white text-xs font-semibold mb-3 px-3 py-1 rounded">
+                <span
+                  style={{ fontFamily: "var(--font-inter)", fontWeight: 300 }}
+                  className="inline-block bg-white/10 backdrop-blur-sm text-white text-xs font-semibold mb-3 px-3 py-1 rounded"
+                >
                   {newsData.category}
                 </span>
               )}
-              {/* --- FONT CHANGE IS HERE --- */}
               <h3
                 className="text-xl text-white leading-tight line-clamp-3"
-                style={{ fontFamily: "var(--font-oxygen-bold)" }}
+                style={{ fontFamily: "var(--font-playfair)", fontWeight: 700 }}
               >
                 {title}
               </h3>
             </div>
           </div>
-
-          {/* Bottom White Part */}
           <div className="p-3 flex flex-col flex-grow">
-            <p className="text-sm text-text-secondary line-clamp-4 flex-grow">
+            <p className="text-sm text-text-secondary line-clamp-4 flex-grow" style={{ fontFamily: "var(--font-inter)", fontWeight: 400 }}>
               {description}
             </p>
             <div className="flex items-center border-gray-200 pt-2 border-t text-sm opacity-80 justify-between mt-4">
@@ -125,11 +138,12 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
 
   // --- RENDER DEFAULT CARD FOR ALL OTHER SECTIONS ---
   return (
-    <div ref={cardRef} className="opacity-0 h-full">
+    <div ref={cardRef} className="opacity-0 h-full"> {/* GSAP targets this */}
       <LoadingLink
         href={`${basePath}/${slug}`}
         className=" group bg-white rounded-[4px] shadow-sm border border-transparent hover:border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden h-full flex flex-col"
       >
+        {/* ... card content ... */}
         {image && (
           <div className="relative w-full h-40 overflow-hidden">
             <Image
@@ -143,10 +157,13 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
           </div>
         )}
         <div className="p-4 flex flex-col flex-grow">
-          <h3 className="text-base font-bold text-text-primary mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
+          <h3 
+            className="text-base text-text-primary mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2"
+            style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700 }}
+          >
             {title}
           </h3>
-          <p className="text-sm text-text-secondary line-clamp-3 flex-grow">
+          <p className="text-sm text-text-secondary line-clamp-3 flex-grow" style={{ fontFamily: "var(--font-inter)", fontWeight: 400 }}>
             {description}
           </p>
           <div className="flex items-center justify-between text-xs text-gray-400 pt-2 mt-4 border-t border-gray-300">

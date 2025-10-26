@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Oxygen, Playfair_Display } from "next/font/google"; // 1. Imports are correct
+import { Oxygen, Playfair_Display, Inter } from "next/font/google"; // 1. Imports are correct
 import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
@@ -21,6 +21,14 @@ const helvetica = localFont({
   ],
   variable: "--font-helvetica",
 });
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ["100", "200", "300","400", "500",],
+  style:'normal',
+  variable: "--font-inter",
+  display: "swap"
+})
 
 // 3. Setup the Google Font (Oxygen)
 const oxygen = Oxygen({
@@ -54,7 +62,7 @@ export default function RootLayout({
     <html lang="en">
       {/* 5. Add the new font variable to the body tag */}
       <body
-        className={`${helvetica.variable} ${oxygen.variable} ${playfair.variable} antialiased flex flex-col min-h-screen`}
+        className={`${helvetica.variable} ${oxygen.variable} ${inter.variable} ${playfair.variable} antialiased flex flex-col min-h-screen`}
       >
         <Navbar />
         <main className="flex-grow">{children}</main>

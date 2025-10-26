@@ -58,14 +58,6 @@ const Hero = () => {
         <p className="hero-subtitle text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8">
           Your trusted source for market insights, news, and in-depth analysis to guide your investment decisions.
         </p>
-        <div className="flex justify-center gap-4">
-          <LoadingLink href="/market-insights" className="hero-button bg-white text-primary font-bold py-3 px-8 rounded-full hover:bg-gray-200 transition-colors duration-300">
-            Explore Insights
-          </LoadingLink>
-          <LoadingLink href="/news" className="hero-button bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-full hover:bg-white hover:text-primary transition-colors duration-300">
-            Latest News
-          </LoadingLink>
-        </div>
       </div>
     </div>
   );
