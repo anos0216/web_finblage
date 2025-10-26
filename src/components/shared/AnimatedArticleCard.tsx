@@ -3,26 +3,20 @@
 import React, { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-// We are no longer using ScrollTrigger, so we can remove the import and registration
-// import { ScrollTrigger } from "gsap/ScrollTrigger"; 
-import LoadingLink from "./LoadingLink"; // Using the smart link for better UX
+import LoadingLink from "./LoadingLink";
 import Image from "next/image";
 import { NewsItem, ArticleItem } from "@/types/finblage";
 import { formatWixImage } from "@/lib/utils";
 import { Calendar, Clock } from "lucide-react";
 
-// gsap.registerPlugin(ScrollTrigger); // We don't need this anymore
-
-// ... (rest of the file is the same)
 type Item = NewsItem | ArticleItem;
 
 interface CardProps {
   item: Item;
-  basePath: string; 
+  basePath: string;
 }
 
 const formatDate = (dateString: string | undefined) => {
-  // ... (same as before)
   if (!dateString) return "";
   return new Date(dateString).toLocaleDateString("en-IN", {
     day: "numeric",
@@ -33,31 +27,24 @@ const formatDate = (dateString: string | undefined) => {
 const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // Set up the GSAP animation for a subtle fade-in effect on scroll
   useGSAP(
     () => {
-      // --- THIS IS THE FIX ---
-      // We've removed the 'scrollTrigger' object entirely.
-      // This is now a simple, lightweight fade-in animation that
-      // plays immediately when the component mounts.
-      // It is dramatically faster and will not block the browser.
       gsap.fromTo(
         cardRef.current,
-        { opacity: 0, y: 20 }, // Start state
+        { opacity: 0, y: 20 },
         {
           opacity: 1,
-          y: 0, // End state
+          y: 0,
           duration: 0.5,
           ease: "power3.out",
         }
       );
     },
     { scope: cardRef }
-  ); 
+  );
 
   // --- Handle Data Variations ---
   const isNews = "richtext" in item.data;
-  // ... (rest of the data handling is the same)
   const title = isNews
     ? (item as NewsItem).data.richtext
     : (item as ArticleItem).data.title;
@@ -83,21 +70,20 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
 
   // --- RENDER NEWS CARD ---
   if (basePath === "/news") {
-    // ... (rest of the news card JSX is the same)
     const newsData = item.data as NewsItem["data"];
     const patternStyle = {
       backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20L0 20z' fill='%23ffffff' fill-opacity='0.07' fill-rule='evenodd'/%3E%3C/svg%3E"), linear-gradient(to bottom right, var(--primary), #000b2c)`,
       backgroundBlendMode: "overlay",
     };
     return (
-      <div ref={cardRef} className="opacity-0 h-full"> {/* 'opacity-0' is still good as a default */}
+      <div ref={cardRef} className="opacity-0 h-full">
         <LoadingLink
           href={`${basePath}/${slug}`}
           className=" group bg-white rounded-[4px] shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden h-full flex flex-col"
         >
           {/* Top Blue Part - Styled like the image */}
           <div
-            className="relative p-4 text-white min-h-[190px] flex flex-col justify-between"
+            className="relative p-4 text-white min-h-[160px] flex flex-col justify-between"
             style={patternStyle}
           >
             <div>
@@ -106,19 +92,13 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
                   {newsData.category}
                 </span>
               )}
-              <h3 className="text-xl font-bold text-white leading-tight line-clamp-3">
+              {/* --- FONT CHANGE IS HERE --- */}
+              <h3
+                className="text-xl text-white leading-tight line-clamp-3"
+                style={{ fontFamily: "var(--font-oxygen-bold)" }}
+              >
                 {title}
               </h3>
-            </div>
-            <div className="flex items-center text-sm opacity-80 justify-between mt-2">
-              <div className="flex">
-                <Clock className="w-4 h-4 mr-2" />
-                <span>{newsData.time?.slice(0, 5)}</span>
-              </div>
-              <div className="flex">
-                <Calendar className="w-3.5 h-3.5 mr-1.5" />
-                <span>{formatDate(dateValue)}</span>
-              </div>
             </div>
           </div>
 
@@ -127,6 +107,16 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
             <p className="text-sm text-text-secondary line-clamp-4 flex-grow">
               {description}
             </p>
+            <div className="flex items-center border-gray-200 pt-2 border-t text-sm opacity-80 justify-between mt-4">
+              <div className="flex items-center ">
+                <Clock className="w-4 h-4 mr-2" />
+                <span>{newsData.time?.slice(0, 5)}</span>
+              </div>
+              <div className="flex items-center">
+                <Calendar className="w-3.5 h-3.5 mr-1.5" />
+                <span>{formatDate(dateValue)}</span>
+              </div>
+            </div>
           </div>
         </LoadingLink>
       </div>
@@ -135,7 +125,6 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
 
   // --- RENDER DEFAULT CARD FOR ALL OTHER SECTIONS ---
   return (
-    // ... (rest of the default card JSX is the same)
     <div ref={cardRef} className="opacity-0 h-full">
       <LoadingLink
         href={`${basePath}/${slug}`}
