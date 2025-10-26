@@ -12,7 +12,7 @@ export default async function NewsPage({ searchParams }: { searchParams: { page?
     // 2. Wrap in a Fragment (or div)
     <>
       <ListHero 
-        title="Latest Market News"
+        title="Financial News"
         subtitle="Stay updated with the latest financial news and market insights."
       />
       

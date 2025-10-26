@@ -35,7 +35,7 @@
 /* 4. Apply your base styles */
 body {
   color: var(--text-primary); /* Uses your main text color variable */
-  font-family: var(--font-helvetica), sans-serif;
+  font-family:  sans-serif;
   font-weight: 400;
 }
 
