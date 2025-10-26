@@ -4,13 +4,14 @@ import React, { useState, useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 
-// ... (type definitions are the same)
+// Define the structure for your filter data
 type SubCategory = "All" | "Indian" | "Global";
 type Category = {
   name: "All" | "Corporate" | "Market" | "Economy" | "Geopolitical" | "Sector";
   subCategories?: SubCategory[];
 };
 
+// Your filter data
 const categories: Category[] = [
   { name: "All" },
   { name: "Corporate" },
@@ -25,35 +26,21 @@ const FilterBar = () => {
   const [activeSubCategory, setActiveSubCategory] = useState<SubCategory | null>(null);
 
   const subCategoryRef = useRef<HTMLDivElement>(null);
-  const mm = gsap.matchMedia(); // Create matchMedia instance
 
   // Animation for the sub-category bar
   useGSAP(() => {
-    
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      // Normal Motion: Animate
-      gsap.to(subCategoryRef.current, {
-        height: activeCategory.subCategories ? "auto" : 0,
-        opacity: activeCategory.subCategories ? 1 : 0,
-        marginTop: activeCategory.subCategories ? "0.75rem" : 0, // 12px
-        duration: 0.3,
-        ease: "power2.out",
-      });
+    gsap.to(subCategoryRef.current, {
+      height: activeCategory.subCategories ? "auto" : 0,
+      opacity: activeCategory.subCategories ? 1 : 0,
+      marginTop: activeCategory.subCategories ? "0.75rem" : 0, // 12px
+      duration: 0.3,
+      ease: "power2.out",
     });
-
-    mm.add("(prefers-reduced-motion: reduce)", () => {
-      // Reduced Motion: Snap
-      gsap.set(subCategoryRef.current, {
-        height: activeCategory.subCategories ? "auto" : 0,
-        opacity: activeCategory.subCategories ? 1 : 0,
-        marginTop: activeCategory.subCategories ? "0.75rem" : 0,
-      });
-    });
-
   }, [activeCategory]);
 
   const handleCategoryClick = (category: Category) => {
     setActiveCategory(category);
+    // Reset sub-category when changing main category
     setActiveSubCategory(category.subCategories ? "All" : null); 
   };
 
@@ -63,13 +50,11 @@ const FilterBar = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* --- Main Category (with ARIA roles) --- */}
-      <div role="tablist" aria-label="Article Categories" className="flex items-center space-x-2 overflow-x-auto pb-2">
+      {/* --- Main Category --- */}
+      <div className="flex items-center space-x-2 overflow-x-auto pb-2">
         {categories.map((category) => (
           <button
             key={category.name}
-            role="tab" // ARIA role
-            aria-selected={activeCategory.name === category.name} // ARIA state
             onClick={() => handleCategoryClick(category)}
             className={`
               px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200
@@ -85,17 +70,15 @@ const FilterBar = () => {
         ))}
       </div>
 
-      {/* --- Conditional Sub-Category (with ARIA roles) --- */}
+      {/* --- Conditional Sub-Category --- */}
       <div 
         ref={subCategoryRef} 
-        className="h-0 opacity-0 overflow-hidden"
+        className="h-0 opacity-0 overflow-hidden" // Initially hidden
       >
-        <div role="tablist" aria-label="Article Sub-categories" className="flex items-center space-x-2 overflow-x-auto pb-2 pl-4">
+        <div className="flex items-center space-x-2 overflow-x-auto pb-2 pl-4">
           {activeCategory.subCategories?.map((sub) => (
             <button
               key={sub}
-              role="tab" // ARIA role
-              aria-selected={activeSubCategory === sub} // ARIA state
               onClick={() => handleSubCategoryClick(sub)}
               className={`
                 px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-200

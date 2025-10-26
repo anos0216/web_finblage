@@ -6,7 +6,7 @@ import ListHero from '@/components/shared/ListHero';
 import FilterBar from '@/components/shared/FilterBar'; // 1. Import the new FilterBar
 
 export default async function NewsPage({ searchParams }: { searchParams: { page?: string } }) {
-  const page = Number(searchParams.page) || 0;
+  const page = Number(searchParams.page) || 1;
   const { dataItems: newsData, pagingMetadata } = await getNews(page);
 
   return (

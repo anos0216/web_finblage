@@ -35,7 +35,7 @@ const Pagination: React.FC<PaginationProps> = ({
         ← Previous
       </a>
 
-      <span className="text-gray-600 font-medium">Page {currentPage + 1}</span>
+      <span className="text-gray-600 font-medium">Page {currentPage}</span>
 
       <a
         href={`${basePath}?page=${nextPage}`}

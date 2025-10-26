@@ -2,7 +2,29 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { getNewsItem } from '@/lib/dataService';
 import { Calendar, Clock } from 'lucide-react';
+import { Metadata } from 'next'; // 1. Import Metadata
 
+// 2. Add generateMetadata function
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const { slug } = params;
+  const response = await getNewsItem(slug);
+
+  if (!response?.dataItem) {
+    return {
+      title: "Not Found",
+      description: "The page you are looking for does not exist."
+    }
+  }
+
+  const article = response.dataItem.data;
+
+  return {
+    title: article.richtext, // Set the page title to the article headline
+    description: article.abstract, // Set the page description to the article abstract
+  };
+}
+
+// 3. Your page component remains unchanged
 export default async function NewsDetailPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
   const response = await getNewsItem(slug);

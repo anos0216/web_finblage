@@ -21,11 +21,11 @@ async function HomepageContent() {
     mergerResponse,
     spotlightResponse
   ] = await Promise.all([
-    getNews(0),
-    getMarketInsights(0),
-    getMarketOutlook(0),
-    getMergerAcquisitions(0),
-    getSpotlight(0),
+    getNews(1),
+    getMarketInsights(1),
+    getMarketOutlook(1),
+    getMergerAcquisitions(1),
+    getSpotlight(1),
   ]);
 
   const latestNews = newsResponse.dataItems?.slice(0, 4) || [];

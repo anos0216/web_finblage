@@ -1,11 +1,14 @@
 "use client";
 
 import React, { ReactNode } from 'react';
-// import Link, { LinkProps } from 'next/link'; // No longer using next/link
+// FIX: Import Link from next/link
+import Link, { LinkProps } from 'next/link';
 
-interface LoadingLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+// FIX: Extend LinkProps
+interface LoadingLinkProps extends LinkProps {
   children: ReactNode;
-  href: string; // Ensure href is explicitly required
+  className?: string;
+  [key: string]: any; // Allow other props
 }
 
 const LoadingLink: React.FC<LoadingLinkProps> = ({ 
@@ -15,11 +18,11 @@ const LoadingLink: React.FC<LoadingLinkProps> = ({
   ...props 
 }) => {
   return (
-    // Use a standard <a> tag to force a full-page reload,
-    // which allows the loading.tsx shimmer to display.
-    <a href={href} className={className} {...props}>
+    // FIX: Use the next/link component
+    // The loading.tsx shimmer will still work correctly.
+    <Link href={href} className={className} {...props}>
       {children}
-    </a>
+    </Link>
   );
 };
 
