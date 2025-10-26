@@ -16,6 +16,14 @@ const inter = Inter({
   display: "swap",
 });
 
+const oxygen = Oxygen({
+  subsets: ['latin'],
+  weight: '700',
+  style: "normal",
+  variable: "--font-oxygen",
+  display: "swap"
+})
+
 const playfair = Playfair_Display({
   subsets: ["latin"],
   weight: ["700"],
@@ -38,7 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={` ${inter.variable} ${playfair.variable} antialiased flex flex-col min-h-screen`}
+        className={` ${inter.variable} ${oxygen.variable} ${playfair.variable} antialiased flex flex-col min-h-screen`}
       >
         <Navbar />
         <main className="flex-grow">{children}</main>

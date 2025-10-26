@@ -1,7 +1,7 @@
 "use client";
 
 // FIX: Removed useRef, useGSAP, and gsap to reduce client-side JS bundle and TBT.
-import React from "react"; 
+import React from "react";
 import LoadingLink from "./LoadingLink";
 import Image from "next/image";
 import { NewsItem, ArticleItem } from "@/types/finblage";
@@ -83,7 +83,7 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
               )}
               <h3
                 className="text-xl text-white leading-tight line-clamp-3"
-                style={{ fontFamily: "var(--font-playfair)", fontWeight: 700 }}
+                style={{ fontFamily: "var(--font-oxygen)", fontWeight: 700 }}
               >
                 {title}
               </h3>
@@ -92,10 +92,7 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
 
           {/* Bottom White Part */}
           <div className="p-3 flex flex-col flex-grow">
-            <p
-              className="text-sm text-text-secondary line-clamp-4 flex-grow"
-              style={{ fontFamily: "var(--font-inter)", fontWeight: 400 }}
-            >
+            <p className="text-sm text-text-secondary line-clamp-4 flex-grow">
               {description}
             </p>
             <div className="flex items-center border-gray-200 pt-2 border-t text-sm opacity-80 justify-between mt-4">
@@ -138,14 +135,11 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
           {/* --- FONT CHANGE IS HERE --- */}
           <h3
             className="text-base text-text-primary mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2"
-            style={{ fontFamily: "var(--font-playfair)", fontWeight: 700 }}
+            style={{ fontFamily: "var(--font-oxygen)" }}
           >
             {title}
           </h3>
-          <p
-            className="text-sm text-text-secondary line-clamp-3 flex-grow"
-            style={{ fontFamily: "var(--font-inter)", fontWeight: 400 }}
-          >
+          <p className="text-sm text-text-secondary line-clamp-3 flex-grow">
             {description}
           </p>
           <div className="flex items-center justify-between text-xs text-gray-400 pt-2 mt-4 border-t border-gray-300">
