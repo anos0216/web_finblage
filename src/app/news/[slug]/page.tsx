@@ -13,8 +13,7 @@ import {
 import LoadingLink from "@/components/shared/LoadingLink";
 import { NewsItem, NewsDataResponse } from "@/types/finblage"; // Assuming NewsDataResponse is the type for dummyData
 
-// --- Dummy Data ---
-// Using the data you provided
+// --- Dummy Data (Restored to Full Content) ---
 const dummyData: NewsDataResponse = {
   dataItems: [
     {
@@ -77,7 +76,6 @@ const dummyData: NewsDataResponse = {
           "IdeaForge Technology Q2 Profit Rises 41% YoY Despite Lower EBITDA",
       },
     },
-    // ... Other dummy data items (I've truncated them for brevity, but they are in your file)
     {
       id: "6d6e8a5b-f7fb-4ea7-b118-102f04dbc933",
       dataCollectionId: "News",
@@ -100,7 +98,8 @@ const dummyData: NewsDataResponse = {
         company: ["ORKLAINDIA"],
         boolean: false,
         date: "2025-10-28",
-        subHeadline: "...",
+        subHeadline:
+          "Orkla India has raised Rs 499.6 crore from 30 institutional investors via its anchor book, setting the stage for its upcoming initial public offering (IPO) worth Rs 1,667.54 crore. The IPO comprises a complete offer-for-sale of 2.28 crore equity shares by existing shareholders.\n\nThe company has fixed the price band for the issue at Rs 695–730 per share. Ahead of the public offering, Orkla India allotted 68.43 lakh shares to anchor investors at the upper end of the price band, signaling strong institutional demand.\n\nThe IPO proceeds will not flow to the company since the issue is purely an offer-for-sale. The listing will provide liquidity to existing shareholders and mark Orkla India’s entry into the public markets.",
         category: "Corporate",
         time: "21:56:00.000",
         richtext:
@@ -128,7 +127,8 @@ const dummyData: NewsDataResponse = {
         "link-news-1-all": "/news-1/",
         company: ["NSE: MARUTI, BOSCHLTD, ASHOKLEY, SBI, IOC"],
         date: "2025-10-28",
-        subHeadline: "...",
+        subHeadline:
+          "On October 28, 2025, India’s equity markets experienced a volatile session with early losses and a slide in key indices. At one point, the Sensex was down more than 500 points, while the Nifty breached the 25,850 level. \nThe weakness was driven by profit-booking after recent gains, elevated volatility (VIX) and uncertainty ahead of upcoming policy decisions globally. \nSpecific sectors saw notable moves: the Auto index slipped by around 0.5%, with players such as Maruti Suzuki, Bosch Ltd. and Ashok Leyland among the top laggards.  Meanwhile, PSU Bank stocks gained on reports that the government may raise the foreign investment cap. \nA recovery attempt was seen after midday: the Sensex climbed over 400 points from its intraday low to trade above the 84,600-point level, and the Nifty moved back above 25,900. \nGlobal cues were mixed; while optimism around a U.S.–China trade deal supported metals, concerns about liquidity and domestic flows kept investors cautious.  The Indian rupee ended nearly flat at ₹88.26 per dollar. ",
         category: "Market ",
         time: "15:38:00.000",
         richtext:
@@ -156,7 +156,8 @@ const dummyData: NewsDataResponse = {
         "link-news-1-all": "/news-1/",
         company: ["OIL, ONGC, RELIANCE, BPCL, HPCL, IOCL"],
         date: "2025-10-28",
-        subHeadline: "...",
+        subHeadline:
+          "Oil prices slipped on Tuesday, extending their losses for the third day in a row. The decline comes as traders reacted to reports that OPEC and its allies, collectively known as OPEC+, are considering raising crude output to ensure stable supply in the market.\n\nThis development offset the improved global risk sentiment driven by optimism surrounding progress in U.S.–China trade negotiations. While a potential easing of trade tensions could support future demand, the near-term expectation of higher supply has kept prices under pressure.\n\nAnalysts noted that market participants remain cautious, with the upcoming OPEC+ meeting expected to provide more clarity on production strategy as demand signals from major economies remain uneven.\n",
         category: "Market ",
         time: "15:32:00.000",
         richtext:
@@ -184,7 +185,8 @@ const dummyData: NewsDataResponse = {
         "link-news-1-all": "/news-1/",
         company: ["(None)"],
         date: "2025-10-28",
-        subHeadline: "...",
+        subHeadline:
+          "According to consultancy Vestian, pure direct investment by foreign players into Indian real estate during July–September 2025 dropped to USD 140.69 million from USD 436.47 million in the same period a year ago — a decline of about 68%. \n\nMeanwhile, co-investment (i.e., foreign + local firms investing together) soared to USD 726.58 million in the quarter, up from USD 109.76 million in the same quarter last year — a growth of nearly 6.6 times. \n\nDomestic players alone invested USD 892.22 million in the quarter, more than doubling from USD 414.55 million a year ago. \n\nOverall, institutional investment in Indian real estate (across commercial assets like office, retail, co-working, hospitality) rose to USD 1,759.49 million in the quarter, compared to USD 960.78 million a year ago — an 83% year-on-year increase. \n\nInvestment in commercial asset classes nearly doubled: from USD 684.47 million last year to USD 1,397.21 million this quarter. \n\nThe shift from pure foreign direct investment to more co-investment structures appears driven by global uncertainties and risk aversion among overseas investors — opting to partner with local firms rather than go solo. \n",
         category: "Market ",
         time: "14:38:00.000",
         richtext:
@@ -212,7 +214,8 @@ const dummyData: NewsDataResponse = {
         "link-news-1-all": "/news-1/",
         company: ["(None)"],
         date: "2025-10-28",
-        subHeadline: "...",
+        subHeadline:
+          "Marcellus Investment Managers’ Global Compounders Portfolio, led by renowned investor Saurabh Mukherjea, has successfully completed three years since its launch in the GIFT City financial hub. The strategy has now surpassed ₹300 crore in assets under management, spanning PMS, AIF, and advisory mandates.\n\nThe portfolio focuses on high-quality global companies across North America, Europe, and Asia that demonstrate consistent earnings and competitive advantages. Since inception, the fund has generated a 27.3% compound annual growth rate, significantly outperforming many global benchmarks and attracting strong inflows from Indian investors seeking international diversification.\n\nThe milestone underscores a growing trend among domestic investors to allocate capital into global equity markets, aided by the tax and regulatory benefits offered through GIFT City-based financial structures.",
         category: "Market ",
         time: "14:35:00.000",
         richtext:
@@ -360,7 +363,7 @@ export default async function NewsDetailPage({
 
   return (
     <>
-      {/* --- New Hero Section (UPDATED) --- */}
+      {/* --- Hero Section --- */}
       <div className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] py-16 text-white overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 z-0 opacity-[0.07]">
@@ -395,9 +398,8 @@ export default async function NewsDetailPage({
           </svg>
         </div>
 
-        {/* Hero Content (UPDATED) */}
+        {/* Hero Content */}
         <div className="container mx-auto px-4 relative z-10">
-          {/* 'mx-auto' REMOVED from this div to align content left */}
           <div className="max-w-4xl">
             {/* Category Badge */}
             <span
@@ -415,9 +417,8 @@ export default async function NewsDetailPage({
               {article.richtext}
             </h1>
 
-            {/* Meta Info & Action Buttons (UPDATED STRUCTURE) */}
+            {/* Meta Info & Action Buttons */}
             <div className="flex flex-col items-start gap-4">
-              
               <div className="flex items-center text-gray-300 text-sm mt-2">
                 <div className="flex items-center mr-4">
                   <Calendar className="w-4 h-4 mr-2 opacity-80" />
@@ -430,8 +431,6 @@ export default async function NewsDetailPage({
               </div>
               {/* Action Icons (Now below the date) */}
               <div className="flex items-center space-x-3">
-                {" "}
-                {/* Removed mt-4 sm:mt-0 */}
                 <button
                   aria-label="Share"
                   className="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-300 hover:text-white"
@@ -477,7 +476,7 @@ export default async function NewsDetailPage({
                   {article.abstract}
                 </p>
 
-                {/* Main Content */}
+                {/* Main Content (This is the part that was broken) */}
                 <div className="prose prose-lg max-w-none text-gray-800">
                   {article.subHeadline.split("\n\n").map(
                     (paragraph, index) =>
