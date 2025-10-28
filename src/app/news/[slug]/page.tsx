@@ -412,7 +412,7 @@ export default async function NewsDetailPage({
             {/* Title */}
             <h1
               className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight"
-              style={{ fontFamily: "var(--font-playfair)", fontWeight: 700 }}
+              style={{ fontFamily: "var(--font-oxygen)", fontWeight: 700 }}
             >
               {article.richtext}
             </h1>
