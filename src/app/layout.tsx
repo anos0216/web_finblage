@@ -33,8 +33,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Create Next App",
-  // SEO FIX: Add a default meta description for your site
+  title: "Finblage",
   description: "Your trusted source for market insights, news, and in-depth financial analysis.",
 };
 

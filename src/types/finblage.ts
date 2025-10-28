@@ -14,7 +14,9 @@ export interface ApiListResponse<T> {
 // Type for a single News item
 export interface NewsItem {
   id: string;
+  dataCollectionId?: string; // Added
   data: {
+    // Existing fields
     richtext: string; // The headline
     abstract: string;
     subHeadline: string; // The full body content for news
@@ -24,6 +26,15 @@ export interface NewsItem {
     company: string[];
     subCategory: string[];
     'link-news-richtext-2': string; // This is the slug
+
+    // Added optional fields from dummy data to fix TS error
+    'link-news-richtext'?: string;
+    _id?: string;
+    _owner?: string;
+    _createdDate?: { $date: string };
+    _updatedDate?: { $date: string };
+    'link-news-1-all'?: string;
+    boolean?: boolean;
   };
 }
 
@@ -37,10 +48,10 @@ export interface ArticleItem {
     category?: string;
     date?: string; // Standard date field
     coursePrice?: string; // Alternative date field for Spotlight collection
-    body: RichTextNode; 
+    body: RichTextNode;
     'link-items-title'?: string;
     'link-merger-aquisition-title'?: string;
-    'link-courses-title'?: string; 
+    'link-courses-title'?: string;
   };
 }
 
@@ -50,11 +61,18 @@ export type RichTextNode = {
 };
 
 export type Node = {
-type: 'HEADING' | 'PARAGRAPH' | 'BULLETED_LIST' | 'LIST_ITEM' | 'TABLE' | 'IMAGE' | 'HTML';
-  id: string;
+  type:
+    | 'HEADING'
+    | 'PARAGRAPH'
+    | 'BULLETED_LIST'
+    | 'LIST_ITEM'
+    | 'TABLE'
+    | 'IMAGE'
+    | 'HTML';
+  id: string;
   nodes: (Node | TextNode)[];
   headingData?: { level: number };
-  imageData?: { image: { src: { id: string } }, caption?: string };
+  imageData?: { image: { src: { id: string } }; caption?: string };
   htmlData?: { html: string };
   // Add other specific data types as needed
 };
@@ -75,3 +93,16 @@ export type Decoration = {
   italicData?: boolean;
   linkData?: { link: { url: string } };
 };
+
+export interface NewsDataResponse {
+  dataItems: NewsItem[];
+  pagingMetadata: {
+    count: number;
+    offset: number;
+    tooManyToCount: boolean;
+    cursors: {
+      next: string;
+    };
+    hasNext: boolean;
+  };
+}

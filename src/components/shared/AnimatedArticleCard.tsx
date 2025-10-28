@@ -1,6 +1,5 @@
 "use client";
 
-// FIX: Removed useRef, useGSAP, and gsap to reduce client-side JS bundle and TBT.
 import React from "react";
 import LoadingLink from "./LoadingLink";
 import Image from "next/image";
@@ -23,10 +22,41 @@ const formatDate = (dateString: string | undefined) => {
   });
 };
 
-const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
-  // FIX: Removed useGSAP hook for performance.
-  // The animation on every card was a major source of TBT.
+// --- HELPER FUNCTION (Corrected) ---
+const extractSlug = (
+  data: NewsItem["data"] | ArticleItem["data"],
+  itemId: string // <-- FIX: Pass the item.id here
+): string | undefined => {
+  const isNews = "richtext" in data;
 
+  // 1. Find the correct link key
+  const slugKey = isNews
+    ? "link-news-richtext-2"
+    : Object.keys(data).find(
+        (key) => key.startsWith("link-") && key.endsWith("-title")
+      );
+
+  if (!slugKey) {
+    // FIX: Use the 'itemId' argument for the fallback
+    return isNews ? undefined : itemId;
+  }
+
+  const linkValue = data[slugKey as keyof typeof data] as string | undefined;
+
+  if (!linkValue) return undefined;
+
+  // 2. Extract, clean, and return the slug
+  try {
+    const parts = linkValue.split("/");
+    const lastPart = parts.pop()?.trim(); // This .trim() is the critical fix
+    return lastPart && lastPart.length > 0 ? lastPart : undefined;
+  } catch {
+    return undefined;
+  }
+};
+// --------------------------
+
+const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
   // --- Handle Data Variations ---
   const isNews = "richtext" in item.data;
   const title = isNews
@@ -41,16 +71,10 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
   const dateValue =
     item.data.date || (item.data as ArticleItem["data"]).coursePrice;
 
-  // FIX: This slug logic was incomplete for other card types
-  const slugKey = Object.keys(item.data).find(
-    (key) => key.startsWith("link-") && key.endsWith("-title")
-  );
-  const slug = isNews
-    ? (item as NewsItem).data["link-news-richtext-2"]?.split("/").pop()
-    : slugKey
-    ? (item.data[slugKey as keyof typeof item.data] as string)?.split("/").pop()
-    : item.id; // Fallback to item.id if no slug key is found
+  // FIX: Pass item.id to the helper function
+  const slug = extractSlug(item.data, item.id);
 
+  // This check now correctly handles undefined or empty strings
   if (!slug) return null;
 
   // --- RENDER NEWS CARD ---
@@ -61,10 +85,9 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
       backgroundBlendMode: "overlay",
     };
     return (
-      // FIX: Removed ref and opacity-0
       <div className="h-full">
         <LoadingLink
-          href={`${basePath}/${slug}`}
+          href={`${basePath}/${slug}`} // Slug is now guaranteed to be clean
           className=" group bg-white rounded-[4px] shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden h-full flex flex-col"
         >
           {/* Top Blue Part - Styled like the image */}
@@ -113,10 +136,9 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
 
   // --- RENDER DEFAULT CARD FOR ALL OTHER SECTIONS ---
   return (
-    // FIX: Removed ref and opacity-0
     <div className="h-full">
       <LoadingLink
-        href={`${basePath}/${slug}`}
+        href={`${basePath}/${slug}`} // Slug is now guaranteed to be clean
         className=" group bg-white rounded-[4px] shadow-sm border border-transparent hover:border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden h-full flex flex-col"
       >
         {image && (
@@ -132,7 +154,6 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
           </div>
         )}
         <div className="p-4 flex flex-col flex-grow">
-          {/* --- FONT CHANGE IS HERE --- */}
           <h3
             className="text-base text-text-primary mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2"
             style={{ fontFamily: "var(--font-oxygen)" }}

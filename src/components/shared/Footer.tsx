@@ -46,7 +46,7 @@ const Footer = () => {
           
           {/* 1. Brand/Logo Section (No changes) */}
           <div className="md:col-span-2">
-            <h3 className="text-2xl font-bold text-white mb-4">YourLogo</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">Finblage</h3>
             <p className="text-gray-300 text-sm max-w-xs mb-6">
               Unlocking Financial Clarity. Your trusted source for market insights, news, and in-depth analysis.
             </p>

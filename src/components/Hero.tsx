@@ -12,11 +12,11 @@ const Hero = () => {
     () => {
       // Animate the background shapes
       gsap.to(".shape", {
-        duration: 40,
-        x: () => `random(-150, 150)%`,
-        y: () => `random(-150, 150)%`,
+        duration: 20,
+        x: () => `random(-180, 180)%`,
+        y: () => `random(-180, 180)%`,
         rotation: () => `random(-360, 360)`,
-        scale: () => `random(0.7, 1.3)`,
+        scale: () => `random(1, 1.5)`,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
@@ -42,7 +42,7 @@ const Hero = () => {
   return (
     <div
       ref={containerRef}
-      className="relative bg-primary text-white py-16 md:py-24 overflow-hidden"
+      className="relative bg-gradient-to-tr from-[#001351] to-[#010822]/90 text-white py-16 md:py-24 overflow-hidden"
     >
       {/* Finance-themed Animated Shapes Background */}
       <div className="absolute inset-0 z-0 opacity-10">

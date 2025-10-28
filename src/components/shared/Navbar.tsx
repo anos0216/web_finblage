@@ -38,7 +38,7 @@ const Navbar: React.FC = () => {
     return (
         <nav className='relative flex items-center justify-between lg:px-8 sm:px-5 py-4 px-3 bg-white shadow-md'>
             <div className='text-2xl font-bold text-gray-800'>
-                <a href="/">YourLogo</a>
+                <a href="/">Finblage</a>
             </div>
 
             {/* Desktop Menu */}

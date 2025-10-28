@@ -1,3 +1,10 @@
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
 // A utility function to convert Wix image URLs to a usable format.
 export function formatWixImage(url: string | undefined | null): string {
   // If the URL is missing, return a path to a local placeholder image.
