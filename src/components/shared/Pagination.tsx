@@ -1,8 +1,8 @@
-import Link from "next/link";
+import Link from "next/link"; // You already had this import
 import React from "react";
 
 interface PaginationProps {
-  currentPage: number;
+  currentPage: number; // This is now 0-based (0, 1, 2, ...)
   hasNextPage: boolean;
   basePath: string;
 }
@@ -22,7 +22,8 @@ const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <div className="flex items-center justify-between gap-4 mt-12">
-      <a
+      {/* FIX: Replaced <a> with <Link> */}
+      <Link
         href={`${basePath}?page=${prevPage}`}
         className={`px-6 py-2 bg-white border border-gray-300 text-gray-700 rounded-[4px] font-medium hover:bg-gray-50 transition ${
           currentPage === 0
@@ -33,11 +34,12 @@ const Pagination: React.FC<PaginationProps> = ({
         tabIndex={currentPage === 0 ? -1 : undefined}
       >
         ← Previous
-      </a>
+      </Link>
 
-      <span className="text-gray-600 font-medium">Page {currentPage}</span>
+      <span className="text-gray-600 font-medium">Page {currentPage || 1}</span>
 
-      <a
+      {/* FIX: Replaced <a> with <Link> */}
+      <Link
         href={`${basePath}?page=${nextPage}`}
         className={`px-6 py-2 bg-primary text-white rounded-[4px] font-medium hover:bg-opacity-90 transition ${
           !hasNextPage
@@ -48,7 +50,7 @@ const Pagination: React.FC<PaginationProps> = ({
         tabIndex={!hasNextPage ? -1 : undefined}
       >
         Next →
-      </a>
+      </Link>
     </div>
   );
 };

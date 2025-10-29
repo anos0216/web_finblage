@@ -5,11 +5,11 @@ import AnimatedArticleCard from '@/components/shared/AnimatedArticleCard';
 import ListHero from '@/components/shared/ListHero';
 // import FilterBar from '@/components/shared/FilterBar'; // REMOVE THIS IMPORT
 
-export default async function NewsPage({ searchParams }: { searchParams: { page?: string } }) {
-  // Page number starts from 1 for user display, but API might use 0-based
-  // Adjust based on your API's expectation for the 'page' parameter
-  const apiPage = Number(searchParams.page || '1') - 1; // Assuming API is 0-based
-  const displayPage = apiPage + 1; // For Pagination component
+export default async function NewsPage({ searchParams }: { searchParams: Promise<{ page: string }> }) {
+  const resolvedParams = await searchParams;
+  // FIX: Changed to be 0-based, consistent with other list pages
+  const apiPage = Number(resolvedParams.page || '1');
+  // const displayPage = apiPage + 1; // No longer needed here
   
   const { dataItems: newsData, pagingMetadata } = await getNews(apiPage);
 
@@ -39,7 +39,7 @@ export default async function NewsPage({ searchParams }: { searchParams: { page?
           )}
 
           <Pagination
-            currentPage={displayPage} // Use displayPage
+            currentPage={apiPage} // FIX: Pass the 0-based apiPage
             hasNextPage={pagingMetadata?.hasNext ?? false}
             basePath="/news"
           />

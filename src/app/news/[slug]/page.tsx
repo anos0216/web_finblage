@@ -257,43 +257,43 @@ const findNewsItemBySlug = (slug: string): NewsItem | undefined => {
 };
 // --- End of Helper Functions ---
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
-  const { slug } = params;
-  console.log("generateMetadata slug:", slug);
+// export async function generateMetadata({
+//   params,
+// }: {
+//   params: { slug: string };
+// }): Promise<Metadata> {
+//   const { slug } = params;
+//   console.log("generateMetadata slug:", slug);
 
-  if (!slug) {
-    return {
-      title: "Not Found",
-      description: "The page you are looking for does not exist.",
-    };
-  }
+//   if (!slug) {
+//     return {
+//       title: "Not Found",
+//       description: "The page you are looking for does not exist.",
+//     };
+//   }
 
-  // Find item from dummy data
-  const articleItem = findNewsItemBySlug(slug);
+//   // Find item from dummy data
+//   const articleItem = findNewsItemBySlug(slug);
 
-  if (!articleItem) {
-    return {
-      title: "Not Found",
-      description: "The page you are looking for does not exist.",
-    };
-  }
-  const article = articleItem.data;
-  return {
-    title: article.richtext,
-    description: article.abstract,
-  };
-}
+//   if (!articleItem) {
+//     return {
+//       title: "Not Found",
+//       description: "The page you are looking for does not exist.",
+//     };
+//   }
+//   const article = articleItem.data;
+//   return {
+//     title: article.richtext,
+//     description: article.abstract,
+//   };
+// }
 
 // Helper component for sidebar news items
 const SidebarNewsItem: React.FC<{ item: NewsItem }> = ({ item }) => {
   // Use the helper function for consistency
   const slug = getSlugFromLink(item.data["link-news-richtext-2"]);
 
-  if (!slug) return null;
+  // if (!slug) return null;
 
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString("en-IN", {
@@ -339,9 +339,12 @@ export default async function NewsDetailPage({
   }
 
   // --- Simulate Data Fetching ---
-  const newsItem = findNewsItemBySlug(slug);
-  const recentNews = dummyData; // All dummy data for the sidebar list
-  // --- End of Simulation ---
+  const recentNews = dummyData;
+  const newsItem =
+    recentNews.dataItems[
+      Math.floor(Math.random() * recentNews.dataItems.length)
+    ];
+  // console.log("news item", newsItem);
 
   // Handle case where the main article isn't found
   if (!newsItem) {
@@ -433,7 +436,7 @@ export default async function NewsDetailPage({
               <div className="flex items-center space-x-3">
                 <button
                   aria-label="Share"
-                  className="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-300 hover:text-white"
+                  className=" rounded-full hover:bg-white/10 transition-colors text-gray-300 hover:text-white"
                 >
                   <Share2 size={18} />
                 </button>
@@ -470,8 +473,8 @@ export default async function NewsDetailPage({
               <article>
                 {/* Abstract/Intro */}
                 <p
-                  className="text-xl text-gray-700 mb-8 italic border-l-4 border-primary pl-4"
-                  style={{ fontFamily: "var(--font-inter)" }}
+                  className="text-[16px] text-gray-700 mb-8 border-l-4 border-primary pl-4"
+                  style={{ fontFamily: "var(--font-oxygen)", fontWeight: 400 }}
                 >
                   {article.abstract}
                 </p>
@@ -484,7 +487,7 @@ export default async function NewsDetailPage({
                         <p
                           key={index}
                           style={{
-                            fontFamily: "var(--font-inter)",
+                            fontFamily: "var(--font-oxygen)",
                             fontWeight: 400,
                           }}
                         >
@@ -495,7 +498,7 @@ export default async function NewsDetailPage({
                 </div>
 
                 {/* Related Companies */}
-                {article.company && article.company[0] !== "(None)" && (
+                {/* {article.company && article.company[0] !== "(None)" && (
                   <footer className="mt-12 pt-6 border-t">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">
                       Related Companies:
@@ -514,13 +517,13 @@ export default async function NewsDetailPage({
                         ))}
                     </div>
                   </footer>
-                )}
+                )} */}
               </article>
             </main>
 
             {/* Right Column: Sidebar */}
             <aside className="lg:w-1/3">
-              <div className="sticky top-24 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <div className="  bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                 <h3
                   className="text-xl font-bold text-primary mb-5"
                   style={{ fontFamily: "var(--font-playfair)" }}

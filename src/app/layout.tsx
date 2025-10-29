@@ -18,7 +18,7 @@ const inter = Inter({
 
 const oxygen = Oxygen({
   subsets: ['latin'],
-  weight: '700',
+  weight: ['300','400', '700'],
   style: "normal",
   variable: "--font-oxygen",
   display: "swap"
