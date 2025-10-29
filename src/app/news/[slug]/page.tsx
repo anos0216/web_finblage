@@ -10,6 +10,8 @@ import {
   Sparkles,
   FileText,
   Bookmark,
+  Minimize2, // Added
+  Maximize2, // Added
 } from "lucide-react";
 import { NewsItem } from "@/types/finblage"; //
 import { ArticleMainContent } from "@/components/detail/ArticleMainContent"; //
@@ -80,6 +82,7 @@ export default function NewsDetailPage() {
   const slug = params.slug as string;
 
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+  const [isNoteMinimized, setIsNoteMinimized] = useState(false); // Added
   const {
     getItemBySlug,
     news,
@@ -203,7 +206,10 @@ export default function NewsDetailPage() {
                 {/* --- MODAL IMPLEMENTATION --- */}
                 <Dialog
                   open={isNoteModalOpen}
-                  onOpenChange={setIsNoteModalOpen}
+                  onOpenChange={(open) => {
+                    if (!open) setIsNoteMinimized(false);
+                    setIsNoteModalOpen(open);
+                  }}
                 >
                   <DialogTrigger asChild>
                     <button
@@ -229,8 +235,19 @@ export default function NewsDetailPage() {
                         }}
                       />
                     </div>
-                    {/* --- FOOTER WITH DONE BUTTON --- */}
-                    <DialogFooter className="pt-4 border-t mt-2">
+                    {/* --- FOOTER WITH MINIMIZE AND DONE BUTTON --- */}
+                    <DialogFooter className="pt-4 border-t mt-2 sm:justify-between">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => {
+                          setIsNoteModalOpen(false);
+                          setIsNoteMinimized(true);
+                        }}
+                      >
+                        <Minimize2 className="w-4 h-4 mr-2" />
+                        Minimize
+                      </Button>
                       <DialogClose asChild>
                         <Button type="button" variant="default">
                           Done
@@ -260,7 +277,7 @@ export default function NewsDetailPage() {
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
             <ArticleMainContent item={newsItem} /> {/* */}
             <ArticleSidebar
-            currentItemId={article._id ?? ""}
+              currentItemId={article._id ?? ""}
               allItemsForTrending={news}
               title="More News"
               items={otherNews}
@@ -270,6 +287,20 @@ export default function NewsDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* --- Minimized Note Widget --- */}
+      {isNoteMinimized && (
+        <Button
+          aria-label="Expand Note"
+          className="fixed bottom-6 left-6 z-[60] rounded-full shadow-lg h-14 w-14 p-0" // z-index higher than modal overlay (50)
+          onClick={() => {
+            setIsNoteMinimized(false);
+            setIsNoteModalOpen(true);
+          }}
+        >
+          <Maximize2 size={24} />
+        </Button>
+      )}
     </>
   );
 }

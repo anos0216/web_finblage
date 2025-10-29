@@ -144,7 +144,7 @@ const EditorToolbar = ({ editor }: { editor: Editor | null }) => {
       <ToggleButton label="Add Link" icon={LinkIcon} onClick={addLink} isActive={editor.isActive("link")} />
       <Button variant="ghost" size="icon" aria-label="Text Color" className="h-8 w-8 p-2 relative" onClick={() => colorInputRef.current?.click()}>
         <Palette className="h-4 w-4" />
-        <input type="color" ref={colorInputRef} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onInput={(event) => editor.chain().focus().setColor(event.currentTarget.value).run()} defaultValue="#000000" value={editor.getAttributes('textStyle').color || '#000000'} />
+        <input type="color" ref={colorInputRef} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onInput={(event) => editor.chain().focus().setColor(event.currentTarget.value).run()} value={editor.getAttributes('textStyle').color || '#000000'} />
       </Button>
       <div className="mx-1 h-6 w-px bg-gray-300" />
       {/* --- Image (Local Upload) --- */}

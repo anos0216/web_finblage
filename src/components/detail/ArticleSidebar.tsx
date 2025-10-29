@@ -32,7 +32,7 @@ const SidebarItem: React.FC<{
       className="block group mb-4 pb-4 border-b border-gray-200 last:border-b-0"
     >
       <h4
-        className="text-sm font-semibold text-gray-800 group-hover:text-primary transition-colors leading-snug mb-1 line-clamp-2"
+        className="text-sm font-semibold text-gray-800 group-hover:text-accent transition-colors leading-snug mb-1 line-clamp-2"
         style={{ fontFamily: "var(--font-inter)" }}
       >
         {title}
