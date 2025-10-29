@@ -1,57 +1,76 @@
-import React from 'react';
-import { notFound } from 'next/navigation';
-// FIX: Import the correct data fetching function
-import { getMergerAcquisitionItem } from '@/lib/dataService';
-import Image from 'next/image';
-import { formatWixImage } from '@/lib/utils';
-import RichTextRenderer from '@/components/shared/RichTextRenderer';
-import { Calendar } from 'lucide-react';
+"use client";
 
-export default async function ArticleDetailPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
-  // FIX: Call the correct data fetching function for this page
-  const response = await getMergerAcquisitionItem(slug);
+import React, { useEffect } from "react";
+import { useParams, notFound } from "next/navigation";
+import { useData } from "@/context/DataContext"; //
+import { ArticleItem } from "@/types/finblage"; //
+import { ArticleDetailHero } from "@/components/detail/ArticleDetailHero"; //
+import { ArticleMainContent } from "@/components/detail/ArticleMainContent"; //
+import { ArticleSidebar } from "@/components/detail/ArticleSidebar"; //
+import { ArticleDetailSkeleton } from "@/components/detail/ArticleDetailSkeleton"; //
 
-  if (!response?.dataItem) {
+export default function ArticleDetailPage() {
+  const params = useParams();
+  const slug = params.slug as string;
+  const itemType = "merger-acquisition";
+  const basePath = "/merger-acquisition";
+  const sidebarTitle = "More M&A News";
+
+  const {
+    getItemBySlug,
+    mergerAcquisitions,
+    isLoading,
+    
+    fetchInitialData,
+  } = useData(); //
+
+  useEffect(() => {
+    if (mergerAcquisitions.length === 0) {
+      fetchInitialData(); //
+    }
+  }, [mergerAcquisitions.length, fetchInitialData]);
+
+  if (isLoading || mergerAcquisitions.length === 0) {
+    return <ArticleDetailSkeleton />;
+  }
+
+  const articleItem = getItemBySlug(slug, itemType) as ArticleItem | undefined; //
+
+  if (!articleItem) {
     notFound();
   }
 
-  const article = response.dataItem.data;
-  const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-  const dateValue = article.date || article.coursePrice;
+  const article = articleItem.data;
+  const dateValue = article.date || article.coursePrice; //
+
+  const otherArticles = mergerAcquisitions
+    .filter((item) => item.id !== articleItem.id)
+    .slice(0, 5); 
 
   return (
-    <div className="bg-gray-50 py-12">
-      <main className="max-w-4xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden">
-        {article.image && (
-          <div className="relative w-full h-64 md:h-96">
-            <Image 
-              src={formatWixImage(article.image)} 
-              alt={article.title}
-              fill
-              style={{ objectFit: 'cover' }}
-              priority
+    <>
+      <ArticleDetailHero
+        title={article.title}
+        category={article.category}
+        date={dateValue!}
+        imageUrl={article.image}
+        itemId={articleItem.id} // <-- FIX: Changed from article.title to articleItem.id
+      />
+
+      <div className="bg-gray-50 pt-32 pb-12 md:pt-40">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+            <ArticleMainContent item={articleItem} />
+            <ArticleSidebar
+            currentItemId={article.title}
+            allItemsForTrending={mergerAcquisitions}
+              title={sidebarTitle}
+              items={otherArticles}
+              basePath={basePath}
             />
           </div>
-        )}
-        <article className="p-6 md:p-10">
-          <header className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-primary leading-tight mb-4">
-              {article.title}
-            </h1>
-            {dateValue && (
-              <div className="flex items-center text-gray-500 text-sm">
-                <Calendar className="w-4 h-4 mr-2" />
-                <span>{formatDate(dateValue)}</span>
-              </div>
-            )}
-          </header>
-
-          <div className="prose prose-lg max-w-none">
-            <RichTextRenderer content={article.body} />
-          </div>
-        </article>
-      </main>
-    </div>
+        </div>
+      </div>
+    </>
   );
 }

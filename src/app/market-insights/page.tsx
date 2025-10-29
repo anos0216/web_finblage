@@ -1,36 +1,39 @@
 import React from 'react';
-import { getMarketOutlook } from '@/lib/dataService';
+// FIX: Changed from getMarketOutlook to getMarketInsights
+import { getMarketInsights } from '@/lib/dataService'; //
 import Pagination from '@/components/shared/Pagination';
 import AnimatedArticleCard from '@/components/shared/AnimatedArticleCard';
-import ListHero from '@/components/shared/ListHero'; // 1. Import
+import ListHero from '@/components/shared/ListHero';
 
-export default async function MarketOutlookPage({ searchParams }: { searchParams: { page?: string } }) {
+export default async function MarketInsightsPage({ searchParams }: { searchParams: { page?: string } }) {
     const page = Number(searchParams?.page) || 0;
-    const { dataItems: articles, pagingMetadata } = await getMarketOutlook(page);
+    // FIX: Changed from getMarketOutlook to getMarketInsights
+    const { dataItems: articles, pagingMetadata } = await getMarketInsights(page); //
 
     return (
       <>
         <ListHero 
-          title="Market Outlook"
-          subtitle="Forward-looking analysis and predictions on market movements and economic forecasts."
+          // FIX: Updated title and subtitle
+          title="Market Insights"
+          subtitle="In-depth analysis and reports on current market trends and economic indicators."
         />
 
         <div className="bg-gray-50">
             <main className="container mx-auto px-4 py-16">
-                {/* Old header removed */}
-
                 {articles.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {articles.map(article => <AnimatedArticleCard key={article.id} item={article} basePath="/market-outlook" />)}
+                        {/* FIX: Updated basePath */}
+                        {articles.map(article => <AnimatedArticleCard key={article.id} item={article} basePath="/market-insights" />)}
                     </div>
                 ) : (
-                    <div className="text-center py-12"><p className="text-gray-500 text-lg">No outlook reports found.</p></div>
+                    <div className="text-center py-12"><p className="text-gray-500 text-lg">No insights found.</p></div>
                 )}
 
                 <Pagination
                     currentPage={page}
                     hasNextPage={pagingMetadata?.hasNext ?? false}
-                    basePath="/market-outlook"
+                    // FIX: Updated basePath
+                    basePath="/market-insights"
                 />
             </main>
         </div>
