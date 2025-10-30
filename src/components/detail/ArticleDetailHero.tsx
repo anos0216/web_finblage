@@ -100,7 +100,7 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
 
         {/* Content Container */}
         <div className="container mx-auto px-4 relative z-10">
-          <div className="relative md:flex md:items-center min-h-[450px] md:min-h-[350px]">
+          <div className="relative md:flex md:items-center min-h-[520px] md:min-h-[350px]">
             {/* --- Text Content (Left) --- */}
             <div className="md:w-full lg:w-3/5 py-12 md:py-16">
               <div className="max-w-xl">
@@ -213,7 +213,7 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
             {/* --- Image (Floating Right) --- */}
             <div
               className="
-            absolute top-[67%] md:absolute md:right-0 md:top-16 md:h-[60%] 
+            absolute top-[58%] md:absolute md:right-0 md:top-16 md:h-[60%] 
             w-full md:w-3/S5 lg:w-[45%] 
             h-64 sm:h-80
             md:pl-8

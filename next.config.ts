@@ -5,6 +5,13 @@ const nextConfig: NextConfig = {
 images: {
     remotePatterns: [
       {
+        // For IPO images (e.g., Tata Capital)
+        protocol: 'https',
+        hostname: 'd1tymi9mhi46bx.cloudfront.net',
+        port: '',
+        pathname: '/cmot-logos/**',
+      },
+      {
         protocol: 'https',
         hostname: 'images.unsplash.com',
         port: '',

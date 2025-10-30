@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* Desktop Menu */}
-            <div className='hidden md:flex items-center gap-x-8'>
+            <div className='hidden z-50 md:flex items-center gap-x-8'>
                 {groupedMenus.map((menu) => (
                     <div
                         key={menu.name}
