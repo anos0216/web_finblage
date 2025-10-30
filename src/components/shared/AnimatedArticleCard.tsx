@@ -16,9 +16,13 @@ interface CardProps {
 
 const formatDate = (dateString: string | undefined) => {
   if (!dateString) return "";
+  // FIX: Added timeZone: "UTC" to ensure the date string is formatted
+  // consistently on both the server and the client, resolving the
+  // hydration error.
   return new Date(dateString).toLocaleDateString("en-IN", {
     day: "numeric",
     month: "short",
+    timeZone: "UTC",
   });
 };
 

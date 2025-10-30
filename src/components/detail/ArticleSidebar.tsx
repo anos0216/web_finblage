@@ -70,7 +70,7 @@ export const ArticleSidebar: React.FC<ArticleSidebarProps> = ({
 }) => {
   return (
     // FIX: Added sticky positioning classes
-    <aside className="lg:w-1/3 lg:sticky lg:top-24 lg:self-start">
+    <aside className="lg:w-1/3 lg:sticky lg:top-2 lg:self-start">
       {/* --- Trending Carousel --- */}
       <TrendingCarousel
         title="Trending"
