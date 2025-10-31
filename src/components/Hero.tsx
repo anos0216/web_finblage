@@ -3,38 +3,141 @@
 import React, { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import LoadingLink from "./shared/LoadingLink";
+import { TextPlugin } from "gsap/TextPlugin"; // Import TextPlugin
 
+// Register the plugin
+gsap.registerPlugin(TextPlugin);
+
+// --- New StockCandle Component ---
+const StockCandle = ({
+  className,
+  isPositive = true,
+}: {
+  className: string;
+  isPositive?: boolean;
+}) => {
+  const color = isPositive ? "text-green-500" : "text-red-500";
+  return (
+    <svg
+      // Add .shape class for GSAP to target
+      className={`shape absolute w-16 h-28 ${className} ${color} opacity-20`}
+      viewBox="0 0 20 40"
+      fill="currentColor"
+      stroke="currentColor"
+    >
+      {/* Add classes for GSAP to target parts */}
+      <line
+        className="candle-wick-top"
+        x1="10"
+        y1="0"
+        x2="10"
+        y2="10"
+        strokeWidth="2"
+        style={{ transformOrigin: "bottom center" }} // Set origin for scaling
+      />
+      <rect
+        className="candle-body"
+        x="5"
+        y="10"
+        width="10"
+        height="20"
+        style={{ transformOrigin: "center center" }} // Set origin for scaling
+      />
+      <line
+        className="candle-wick-bottom"
+        x1="10"
+        y1="30"
+        x2="10"
+        y2="40"
+        strokeWidth="2"
+        style={{ transformOrigin: "top center" }} // Set origin for scaling
+      />
+    </svg>
+  );
+};
+
+// --- Updated Hero Component ---
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      // Animate the background shapes
-      gsap.to(".shape", {
-        duration: 20,
-        x: () => `random(-180, 180)%`,
-        y: () => `random(-180, 180)%`,
-        rotation: () => `random(-360, 360)`,
-        scale: () => `random(1, 1.5)`,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
+      const random = gsap.utils.random;
 
-      // Animate the text content
-      const tl = gsap.timeline();
-      tl.from(".hero-title", {
-        opacity: 0,
-        y: 30,
-        duration: 0.8,
-        ease: "power3.out",
-      }).from(
-        ".hero-subtitle",
-        { opacity: 0, y: 20, duration: 0.6, ease: "power3.out" },
-        "-=0.5"
-      );
-      // FIX: Removed the .from(".hero-button", ...) line
+      // --- 1. Typing Animation ---
+      const titleEl = containerRef.current?.querySelector(".hero-title");
+      const subtitleEl = containerRef.current?.querySelector(".hero-subtitle");
+
+      if (titleEl && subtitleEl) {
+        // Store original text
+        const titleText = titleEl.textContent;
+        const subtitleText = subtitleEl.textContent;
+        
+        // Clear text content to prepare for typing
+        titleEl.textContent = "";
+        subtitleEl.textContent = "";
+
+        const textTl = gsap.timeline();
+        textTl
+          .to(titleEl, {
+            duration: titleText!.length * 0.07, // Adjust speed
+            text: titleText,
+            ease: "none",
+          })
+          .to(
+            subtitleEl,
+            {
+              duration: subtitleText!.length * 0.04, // Adjust speed
+              text: subtitleText,
+              ease: "none",
+            },
+            "-=0.5" // Start subtitle slightly before title finishes
+          );
+      }
+
+      // --- 2. Candle Animation ---
+      const candles = gsap.utils.toArray(".shape");
+      candles.forEach((candle) => {
+        const body = (candle as Element).querySelector(".candle-body");
+        const topWick = (candle as Element).querySelector(".candle-wick-top");
+        const bottomWick = (candle as Element).querySelector(".candle-wick-bottom");
+
+        // Create a unique, repeating timeline for each candle
+        const candleTl = gsap.timeline({
+          repeat: -1,
+          repeatDelay: random(1, 4), // Wait a random time before repeating
+          yoyo: true, // Animate back and forth
+        });
+
+        candleTl
+          .to(
+            body,
+            {
+              scaleY: random(0.2, 1.5), // Randomly scale body height
+              duration: random(1, 3),
+              ease: "power1.inOut",
+            },
+            0 // Start at the beginning
+          )
+          .to(
+            topWick,
+            {
+              scaleY: random(0.1, 2), // Randomly scale top wick
+              duration: random(1, 3),
+              ease: "power1.inOut",
+            },
+            0 // Start at the same time
+          )
+          .to(
+            bottomWick,
+            {
+              scaleY: random(0.1, 2), // Randomly scale bottom wick
+              duration: random(1, 3),
+              ease: "power1.inOut",
+            },
+            0 // Start at the same time
+          );
+      });
     },
     { scope: containerRef }
   );
@@ -42,70 +145,56 @@ const Hero = () => {
   return (
     <div
       ref={containerRef}
-      className="relative bg-gradient-to-tr from-[#001351] to-[#010822]/90 text-white py-16 md:py-24 overflow-hidden"
+      className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] text-white py-16 md:py-24 overflow-hidden"
     >
-      {/* Finance-themed Animated Shapes Background */}
-      <div className="absolute inset-0 z-0 opacity-10">
-        {/* Rising Graph */}
-        <svg
-          className="shape absolute top-[20%] left-[10%] w-32 h-32 text-white"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-          <polyline points="17 6 23 6 23 12"></polyline>
-        </svg>
-        {/* Bar Chart */}
-        <svg
-          className="shape absolute top-[60%] left-[80%] w-28 h-28 text-white"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <line x1="12" y1="20" x2="12" y2="10"></line>
-          <line x1="18" y1="20" x2="18" y2="4"></line>
-          <line x1="6" y1="20" x2="6" y2="16"></line>
-        </svg>
-        {/* Pie Chart */}
-        <svg
-          className="shape absolute top-[70%] left-[20%] w-40 h-40 text-white"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
-          <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
-        </svg>
-        {/* Currency/Coin */}
-        <svg
-          className="shape absolute top-[15%] left-[75%] w-20 h-20 text-white"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="16" x2="12" y2="8"></line>
+      <div className="absolute inset-0  z-0 opacity-[0.07]">
+        {/* ... svg pattern (static) ... */}
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern
+              id="pattern-lines"
+              x="0"
+              y="0"
+              width="10"
+              height="10"
+              patternUnits="userSpaceOnUse"
+              patternTransform="rotate(45)"
+            >
+              <line
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="10"
+                stroke="white"
+                strokeWidth="1"
+              />
+            </pattern>
+          </defs>
+          <rect
+            x="0"
+            y="0"
+            width="100%"
+            height="100%"
+            fill="url(#pattern-lines)"
+          ></rect>
         </svg>
       </div>
 
+      {/* FIX: Replaced TickerShapes with animating StockCandles */}
+      <div className="absolute inset-0 z-0">
+        <StockCandle className="top-[15%] left-[10%]" isPositive={true} />
+        <StockCandle className="top-[30%] left-[80%]" isPositive={false} />
+        <StockCandle className="top-[70%] left-[5%]" isPositive={false} />
+        <StockCandle className="top-[10%] left-[70%]" isPositive={true} />
+        <StockCandle className="top-[80%] left-[75%]" isPositive={false} />
+        <StockCandle className="top-[50%] left-[40%]" isPositive={true} />
+      </div>
+
       <div className="container mx-auto px-4 text-center relative z-10">
-        <h1 className="hero-title text-4xl md:text-6xl font-bold leading-tight mb-4">
+        <h1 className="hero-title text-4xl md:text-6xl font-bold leading-tight mb-4 min-h-[4rem] md:min-h-[5rem]">
           Unlocking Financial Clarity
         </h1>
-        <p className="hero-subtitle text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8">
+        <p className="hero-subtitle text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8 min-h-[6rem]">
           Your trusted source for market insights, news, and in-depth analysis
           to guide your investment decisions.
         </p>
