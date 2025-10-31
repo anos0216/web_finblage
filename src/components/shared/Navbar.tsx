@@ -36,43 +36,12 @@ const Navbar: React.FC = () => {
   });
 
   return (
-    <nav className="relative flex items-center bg-gradient-to-br text-white from-primary via-primary to-primary border-b justify-between lg:px-8 sm:px-5 py-4 px-3">
+    <nav className="fixed top-0 left-0 flex z-20 w-full items-center bg-transparent text-white border-b justify-between lg:px-8 sm:px-5 py-4 px-3">
       <div className="text-2xl z-20 font-bold">
         <a href="/">Finblage</a>
       </div>
 
-      <div className="absolute inset-0 z-0 opacity-[0.05]">
-        {/* ... svg pattern ... */}
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern
-              id="pattern-lines"
-              x="0"
-              y="0"
-              width="10"
-              height="10"
-              patternUnits="userSpaceOnUse"
-              patternTransform="rotate(45)"
-            >
-              <line
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="10"
-                stroke="white"
-                strokeWidth="1"
-              />
-            </pattern>
-          </defs>
-          <rect
-            x="0"
-            y="0"
-            width="100%"
-            height="100%"
-            fill="url(#pattern-lines)"
-          ></rect>
-        </svg>
-      </div>
+     
 
       {/* Desktop Menu */}
       <div className="hidden md:flex items-center gap-x-8">
