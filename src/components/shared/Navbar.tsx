@@ -1,14 +1,22 @@
 "use client";
 
 import React, { useState } from "react";
+import { usePathname } from "next/navigation"; // Import the usePathname hook
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import MobileNav from "./MobileNav";
 import { FiMenu, FiX } from "react-icons/fi";
 import { accountMenu, groupedMenus } from "@/data/menus";
+import { cn } from "@/lib/utils"; // Import cn for conditional classes
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  
+  // Get the current URL path
+  const pathname = usePathname();
+  
+  // Check if the current path starts with /market
+  const isMarketPage = pathname.startsWith("/market");
 
   const { contextSafe } = useGSAP();
 
@@ -36,12 +44,21 @@ const Navbar: React.FC = () => {
   });
 
   return (
-    <nav className="fixed top-0 left-0 flex z-20 w-full items-center bg-transparent text-white border-b justify-between lg:px-8 sm:px-5 py-4 px-3">
+    <nav
+      className={cn(
+        // Base classes applied to all routes
+        // FIX: Changed z-20 to z-40 to be above MarketTabNav (z-30)
+        "flex z-40 w-full items-center bg-transparent justify-between lg:px-8 sm:px-5 py-4 px-3",
+        
+        // Conditional classes
+        isMarketPage
+          ? "relative text-primary" // Use 'relative' on market routes
+          : "fixed top-0 left-0 text-white border-b" // Use 'fixed' on all other routes
+      )}
+    >
       <div className="text-2xl z-20 font-bold">
         <a href="/">Finblage</a>
       </div>
-
-     
 
       {/* Desktop Menu */}
       <div className="hidden md:flex items-center gap-x-8">
@@ -55,12 +72,20 @@ const Navbar: React.FC = () => {
             {menu.path ? (
               <a
                 href={menu.path}
-                className="text-gray-400 hover:text-white transition-colors duration-300"
+                // FIX: Conditional hover color
+                className={cn(
+                  " transition-colors duration-300",
+                  isMarketPage ? "hover:text-primary text-gray-600" : "hover:text-white text-gray-600"
+                )}
               >
                 {menu.name}
               </a>
             ) : (
-              <span className="text-gray-400 cursor-pointer hover:text-white transition-colors duration-300 flex items-center gap-x-1">
+              // FIX: Conditional hover color
+              <span className={cn(
+                " cursor-pointer transition-colors duration-300 flex items-center gap-x-1",
+                isMarketPage ? "hover:text-primary text-gray-600" : "hover:text-white text-gray-400"
+              )}>
                 {menu.name}
               </span>
             )}
@@ -95,13 +120,21 @@ const Navbar: React.FC = () => {
       <div className="flex items-center z-20 gap-x-4">
         <a
           href={accountMenu.path}
-          className="hidden md:block text-gray-400 hover:text-white transition-colors duration-300"
+          // FIX: Conditional hover color
+          className={cn(
+            "hidden md:block transition-colors duration-300",
+            isMarketPage ? "hover:text-primary text-gray-600" : "hover:text-white text-gray-400"
+          )}
         >
           {accountMenu.name}
         </a>
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="lg:hidden text-2xl text-gray-400 z-50"
+          // FIX: Conditional hover color
+          className={cn(
+            "lg:hidden text-2xl  z-50 transition-colors duration-300",
+            isMarketPage ? "hover:text-primary text-gray-600" : "hover:text-white text-gray-400"
+          )}
           aria-label="Toggle mobile menu"
         >
           {isMobileMenuOpen ? <FiX /> : <FiMenu />}

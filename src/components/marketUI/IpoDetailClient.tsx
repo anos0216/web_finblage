@@ -1,130 +1,183 @@
-// src/components/market/IpoDetailClient.tsx
-"use client"; // Needs to be client for URL launcher and future charts
+"use client";
 
 import React from 'react';
 import Image from 'next/image';
 import { UnifiedIpo } from '@/lib/market-data';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, Calendar, CheckCircle, RefreshCw, FileText, BarChart2 } from 'lucide-react';
+import {
+  ExternalLink,
+  Calendar,
+  CheckCircle,
+  RefreshCw,
+  FileText,
+  BarChart2,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
-// import RichTextRenderer from '@/components/shared/RichTextRenderer'; // Assuming you have this
+
+// Import the new components
+import IpoTimeline from './IpoTimeline';
+import IpoFinancials from './IpoFinancials';
+import IpoTextSection from './IpoTextSection';
 
 // Placeholder for RichTextRenderer
 const RichTextRenderer = ({ content }: { content: any }) => (
-  <div className="prose prose-sm max-w-none">
-    <p>Rich text content goes here. (This is a placeholder)</p>
-    {/* You would map through content.nodes here */}
-  </div>
-);
-
-// Placeholder for FinancialsChart
-const FinancialsChart = ({ financials }: { financials: any }) => (
-  <div className="bg-gray-100 p-4 rounded-lg text-center text-gray-600">
-    <BarChart2 className="mx-auto h-12 w-12 text-gray-400" />
-    <p className="mt-2 text-sm">Financials Chart Placeholder</p>
+  <div className="prose prose-sm max-w-none text-gray-700">
+    <p>{content || "No 'About' information available."}</p>
   </div>
 );
 
 const IpoDetailClient: React.FC<{ ipo: UnifiedIpo }> = ({ ipo }) => {
   const hasImage = ipo.imageUrl && ipo.imageUrl.length > 0;
 
-  const InfoItem = ({ label, value }: { label: string, value: string | undefined }) => (
+  const InfoItem = ({
+    label,
+    value,
+  }: {
+    label: string;
+    value: string | undefined;
+  }) => (
     <div>
-      <p className="text-xs text-gray-500 mb-0.5">{label}</p>
-      <p className="text-sm font-semibold text-gray-800">{value || 'N/A'}</p>
+      {/* FIX: Changed text colors for dark background */}
+      <p className="text-xs text-gray-300 mb-0.5">{label}</p>
+      <p className="text-sm font-semibold text-white">{value || 'N/A'}</p>
     </div>
   );
-
-  const TimelineItem = ({ icon: Icon, label, value, color }: any) => (
-    <div className="flex items-start gap-3">
-      <div className={cn("p-2 rounded-full", color.bg)}>
-        <Icon size={20} className={color.text} />
-      </div>
-      <div>
-        <p className="font-medium text-gray-800">{label}</p>
-        <p className="text-sm text-gray-600">{value || 'TBA'}</p>
-      </div>
-    </div>
-  );
-  
-  const timelineColors = {
-    green: { bg: 'bg-green-100', text: 'text-green-700' },
-    red: { bg: 'bg-red-100', text: 'text-red-700' },
-    orange: { bg: 'bg-orange-100', text: 'text-orange-700' },
-    blue: { bg: 'bg-blue-100', text: 'text-blue-700' },
-    purple: { bg: 'bg-purple-100', text: 'text-purple-700' },
-  };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    // Use a wider container for this layout
+    <div className="max-w-6xl mx-auto space-y-6 py-8">
       {/* Header */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+      {/* FIX: Changed to bg-primary, removed border */}
+      <div className="relative p-6 rounded-lg shadow-sm bg-primary overflow-hidden">
+        {/* FIX: Changed z-50 to z-0 to put pattern in background */}
+        <div className="absolute inset-0 z-0 opacity-[0.07]">
+          {/* ... svg pattern (static) ... */}
+          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern
+                id="pattern-lines"
+                x="0"
+                y="0"
+                width="10"
+                height="10"
+                patternUnits="userSpaceOnUse"
+                patternTransform="rotate(45)"
+              >
+                <line
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="10"
+                  stroke="white"
+                  strokeWidth="1"
+                />
+              </pattern>
+            </defs>
+            <rect
+              x="0"
+              y="0"
+              width="100%"
+              height="100%"
+              fill="url(#pattern-lines)"
+            ></rect>
+          </svg>
+        </div>
+
+        {/* FIX: Added relative z-10 to put content above pattern */}
+        <div className="relative z-10 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-lg bg-gray-100 border flex items-center justify-center overflow-hidden flex-shrink-0">
               {hasImage ? (
-                <Image src={ipo.imageUrl!} alt={ipo.companyName} width={64} height={64} className="object-contain" />
+                <Image
+                  src={ipo.imageUrl!}
+                  alt={ipo.companyName}
+                  width={64}
+                  height={64}
+                  className="object-contain"
+                />
               ) : (
-                <span className="text-sm text-gray-500 text-center leading-tight">No Logo</span>
+                <span className="text-sm text-gray-500 text-center leading-tight">
+                  No Logo
+                </span>
               )}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-primary">{ipo.companyName}</h1>
-              <p className="text-sm text-gray-600">{ipo.issueType}</p>
+              {/* FIX: Changed text-primary to text-white */}
+              <h1 className="text-2xl font-bold text-white">
+                {ipo.companyName}
+              </h1>
+              {/* FIX: Changed text-gray-600 to text-gray-200 */}
+              <p className="text-sm text-gray-200">{ipo.issueType}</p>
             </div>
           </div>
           {ipo.drhpUrl && (
-            <Button asChild variant="outline" className="flex-shrink-0">
+            // FIX: Styled button for dark background
+            <Button
+              asChild
+              variant="outline"
+              className="flex-shrink-0 border-gray-300 text-gray-600 hover:bg-white hover:text-primary"
+            >
               <a href={ipo.drhpUrl} target="_blank" rel="noopener noreferrer">
                 View DRHP <ExternalLink size={16} className="ml-2" />
               </a>
             </Button>
           )}
         </div>
-      </div>
 
-      {/* IPO Details */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">IPO Details</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-4">
-          <InfoItem label="Price Band" value={ipo.priceBand} />
-          <InfoItem label="Issue Size" value={ipo.issueSize} />
-          <InfoItem label="Min Investment" value={ipo.minInvestment} />
-          <InfoItem label="Lot Size" value={`${ipo.lotSize || "N/A"} Shares`} />
-          <InfoItem label="Open Date" value={ipo.issueOpenDate} />
-          <InfoItem label="Close Date" value={ipo.issueCloseDate} />
+        {/* FIX: Added relative z-10 to put content above pattern */}
+        <div className="relative z-10 mt-5">
+          {/* FIX: Changed text-gray-900 to text-white */}
+          <h2 className="text-lg font-semibold text-white mb-2">
+            IPO Details
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-5 gap-x-4">
+            <InfoItem label="Price Band" value={ipo.priceBand} />
+            <InfoItem
+              label="Lot Size"
+              value={ipo.lotSize ? `${ipo.lotSize} Shares` : 'N/A'}
+            />
+            <InfoItem label="Issue Size" value={ipo.issueSize} />
+            <InfoItem label="Min Investment" value={ipo.minInvestment} />
+            <InfoItem label="Status" value={ipo.status} />
+            <InfoItem label="Issue Type" value={ipo.ipoType} />
+            <InfoItem label="Listing At" value="BSE, NSE" />{' '}
+            {/* Example data */}
+            <InfoItem label="Registrar" value={ipo.registrar || 'N/A'} />
+          </div>
         </div>
       </div>
+
+      {/* --- NEW SECTIONS --- (Unchanged) */}
 
       {/* IPO Timeline */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-6">IPO Timeline</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4">
-          <TimelineItem icon={Calendar} label="Offer Starts" value={ipo.issueOpenDate} color={timelineColors.green} />
-          <TimelineItem icon={Calendar} label="Offer Ends" value={ipo.issueCloseDate} color={timelineColors.red} />
-          <TimelineItem icon={CheckCircle} label="Allotment Finalization" value={ipo.basisOfAllotmentDate} color={timelineColors.orange} />
-          <TimelineItem icon={RefreshCw} label="Refunds Initiation" value={ipo.refundsInitiatedDate} color={timelineColors.blue} />
-          <TimelineItem icon={FileText} label="Shares Credited" value={ipo.sharesCreditedDate} color={timelineColors.blue} />
-          <TimelineItem icon={BarChart2} label="Listing Date" value={ipo.listingDate} color={timelineColors.purple} />
-        </div>
-      </div>
+      <IpoTimeline ipo={ipo} />
 
-      {/* Financials (Placeholder) */}
-      {ipo.financials && (
+      {/* About Section */}
+      {ipo.about && (
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Company Financials (in ₹ Cr)</h2>
-          <FinancialsChart financials={ipo.financials} />
-          {/* You can also render the table here if needed */}
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            About {ipo.companyName}
+          </h2>
+          <RichTextRenderer content={ipo.about} />
         </div>
       )}
 
-      {/* About (Placeholder) */}
-      {ipo.richContent && (
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">About the IPO</h2>
-          <RichTextRenderer content={ipo.richContent} />
-        </div>
+      {/* Financials Section */}
+      {ipo.financials && ipo.financials.length > 0 && (
+        <IpoFinancials financials={ipo.financials} />
       )}
+
+      {/* Objects of the Offer */}
+      <IpoTextSection
+        title="Objects of the Offer"
+        points={ipo.objectsOfTheOffer}
+      />
+
+      {/* Strengths */}
+      <IpoTextSection title="Strengths" points={ipo.strengths} />
+
+      {/* Risks */}
+      <IpoTextSection title="Risks" points={ipo.risks} />
     </div>
   );
 };

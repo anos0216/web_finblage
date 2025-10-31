@@ -107,12 +107,21 @@ export const getTrendingStocksData = async (): Promise<TrendingStocks> => {
 };
 
 // --- IPO TAB DATA ---
-// Based on ipo_tab.dart
+
+// New interface for strongly-typed financial data
+export interface IpoFinancial {
+  period: string;
+  revenue?: number;
+  pat?: number;
+  eps?: number;
+}
+
+// Updated UnifiedIpo interface
 export interface UnifiedIpo {
-  slug: string; // Added for web URL
+  slug: string;
   companyName: string;
   ipoType: string;
-  status: "Open" | "Closed" | "Listing Soon" | "Listed";
+  status: "Open" | "Closed" | "Listing Soon" | "Listed" | "Upcoming"; // Added Upcoming
   imageUrl?: string;
   issueOpenDate?: string;
   issueCloseDate?: string;
@@ -123,9 +132,9 @@ export interface UnifiedIpo {
   issuePrice?: string;
   ltp?: string;
   gainPercent?: string;
+  
   // Detail fields
-  richContent?: any;
-  financials?: any;
+  financials?: IpoFinancial[]; // Updated from 'any'
   lotSize?: string;
   basisOfAllotmentDate?: string;
   refundsInitiatedDate?: string;
@@ -133,40 +142,72 @@ export interface UnifiedIpo {
   subscription?: string;
   issueType?: string;
   drhpUrl?: string;
+  registrar?: string; // New
+  about?: string; // New (replaces richContent)
+  objectsOfTheOffer?: string[]; // New
+  strengths?: string[]; // New
+  risks?: string[]; // New
 }
 
 const allIpoData: UnifiedIpo[] = [
+  // --- Tata Capital (Updated with full dummy data) ---
   {
     slug: "tata-capital",
-    companyName: "Tata Capital",
-    issueOpenDate: "06 Oct '25",
-    issueCloseDate: "08 Oct '25",
-    priceBand: "₹ 310 - ₹ 326",
-    imageUrl:
-      "https://d1tymi9mhi46bx.cloudfront.net/cmot-logos/TataCapitalLtd_25713188_29113.png",
+    companyName: "Tata Capital Ltd.",
+    status: "Upcoming",
     ipoType: "Mainboard",
-    status: "Open",
-    minInvestment: "₹ 14,996",
-    issueSize: "₹ 15,511 Cr",
-    issueType: "Fresh Issue & Offer for sale",
-    drhpUrl:
-      "https://www.sebi.gov.in/filings/public-issues/apr-2024/tata-capital-limited-draft-red-herring-prospectus_82672.html",
-    lotSize: "46",
-    basisOfAllotmentDate: "2025-10-09",
-    refundsInitiatedDate: "2025-10-10",
-    sharesCreditedDate: "2025-10-10",
-    listingDate: "2025-10-13",
-    richContent: {
-      nodes: [
-        /* ... from JSON ... */
-      ],
-    },
-    financials: {
-      nodes: [
-        /* ... from JSON ... */
-      ],
-    },
+    imageUrl: "https://d1tymi9mhi46bx.cloudfront.net/cmot-logos/TataCapitalLtd_25713188_29113.png", // Using Tata Steel logo as placeholder
+    
+    // --- List View Fields ---
+    issueOpenDate: "Nov 10, 2025",
+    issueCloseDate: "Nov 12, 2025",
+    priceBand: "₹450 - ₹475",
+    minInvestment: "₹14,250",
+    issueSize: "₹3,500 Cr",
+    
+    // --- Detail View Fields ---
+    lotSize: "30",
+    issueType: "Book Built Issue IPO",
+    drhpUrl: "#",
+    registrar: "Link Intime India Pvt Ltd",
+
+    // --- Timeline ---
+    basisOfAllotmentDate: "Nov 15, 2025",
+    refundsInitiatedDate: "Nov 16, 2025",
+    sharesCreditedDate: "Nov 17, 2025",
+    listingDate: "Nov 18, 2025",
+
+    // --- Text Sections ---
+    about: "Tata Capital Limited, a subsidiary of Tata Sons Limited, is the financial services arm of the Tata Group. It operates as a diversified financial services company, offering a wide range of products and services in areas such as consumer finance, commercial finance, investment banking, and wealth management.",
+    
+    objectsOfTheOffer: [
+      "To augment the company's capital base to meet future capital requirements arising out of growth in its business and assets.",
+      "To receive the benefits of listing the equity shares on the stock exchanges.",
+      "To carry out the Offer for Sale of equity shares by the selling shareholders.",
+    ],
+    
+    strengths: [
+      "Strong and trusted brand name ('Tata') associated with quality and reliability.",
+      "Diversified business model with presence across multiple financial services sectors.",
+      "Robust risk management framework and healthy asset quality.",
+      "Strong parentage and support from Tata Sons and the wider Tata ecosystem.",
+    ],
+    
+    risks: [
+      "Operations are subject to stringent regulatory requirements by the RBI and other bodies.",
+      "Competition from established banks, NBFCs, and new-age fintech players.",
+      "Asset quality may be affected by economic downturns or volatility in the sectors it lends to.",
+      "Dependency on the stability of the Indian financial markets for liquidity and funding.",
+    ],
+
+    // --- Financials (Table & Graph) ---
+    financials: [
+      { period: 'FY23', revenue: 10500, pat: 1800, eps: 12.5 },
+      { period: 'FY24', revenue: 12800, pat: 2200, eps: 15.2 },
+      { period: 'FY25 (Est.)', revenue: 15000, pat: 2700, eps: 18.8 },
+    ],
   },
+  // --- Other IPOs (with new fields as undefined) ---
   {
     slug: "wework-management",
     companyName: "WeWork Management",
@@ -178,6 +219,11 @@ const allIpoData: UnifiedIpo[] = [
     status: "Open",
     minInvestment: "₹ 14,904",
     issueSize: "₹ 3,500 Cr",
+    financials: [],
+    about: "Details for WeWork Management are not available yet.",
+    objectsOfTheOffer: [],
+    strengths: [],
+    risks: [],
   },
   {
     slug: "sheel-biotech",
@@ -190,6 +236,11 @@ const allIpoData: UnifiedIpo[] = [
     status: "Closed",
     minInvestment: "₹ 1,26,000",
     issueSize: "₹ 18.2 Cr",
+    financials: [],
+    about: "Details for Sheel Biotech are not available yet.",
+    objectsOfTheOffer: [],
+    strengths: [],
+    risks: [],
   },
   {
     slug: "zelio-emobility",
@@ -202,6 +253,11 @@ const allIpoData: UnifiedIpo[] = [
     status: "Closed",
     minInvestment: "₹ 1,36,000",
     issueSize: "₹ 11.5 Cr",
+    financials: [],
+    about: "Details for Zelio EMobility are not available yet.",
+    objectsOfTheOffer: [],
+    strengths: [],
+    risks: [],
   },
   {
     slug: "munish-forge",
@@ -214,6 +270,11 @@ const allIpoData: UnifiedIpo[] = [
     status: "Closed",
     minInvestment: "₹ 1,15,200",
     issueSize: "₹ 9.2 Cr",
+    financials: [],
+    about: "Details for Munish Forge are not available yet.",
+    objectsOfTheOffer: [],
+    strengths: [],
+    risks: [],
   },
   {
     slug: "earkart",
@@ -223,6 +284,11 @@ const allIpoData: UnifiedIpo[] = [
     issuePrice: "₹ 135",
     ipoType: "SME",
     status: "Listing Soon",
+    financials: [],
+    about: "Details for Earkart are not available yet.",
+    objectsOfTheOffer: [],
+    strengths: [],
+    risks: [],
   },
   {
     slug: "jinkushal-industries",
@@ -232,6 +298,11 @@ const allIpoData: UnifiedIpo[] = [
     issuePrice: "₹ 121",
     ipoType: "Mainboard",
     status: "Listing Soon",
+    financials: [],
+    about: "Details for Jinkushal Industries are not available yet.",
+    objectsOfTheOffer: [],
+    strengths: [],
+    risks: [],
   },
   {
     slug: "epack-prefab",
@@ -241,6 +312,11 @@ const allIpoData: UnifiedIpo[] = [
     gainPercent: "-6.5%",
     ipoType: "Mainboard",
     status: "Listed",
+    financials: [],
+    about: "Details for Epack Prefab Technologies are not available yet.",
+    objectsOfTheOffer: [],
+    strengths: [],
+    risks: [],
   },
   {
     slug: "praruh-technologies",
@@ -250,6 +326,11 @@ const allIpoData: UnifiedIpo[] = [
     gainPercent: "2.0%",
     ipoType: "SME",
     status: "Listed",
+    financials: [],
+    about: "Details for Praruh Technologies are not available yet.",
+    objectsOfTheOffer: [],
+    strengths: [],
+    risks: [],
   },
 ];
 
@@ -259,6 +340,7 @@ export const getFilteredIpos = async (
 ): Promise<UnifiedIpo[]> => {
   let filtered = allIpoData.filter((ipo) => {
     if (status === "Open") return ipo.status === "Open";
+    // Show Upcoming, Closed, Listing Soon, Listed in the "Closed" tab
     return ipo.status !== "Open";
   });
 
@@ -483,7 +565,7 @@ export const getEventsData = async (): Promise<{
         company: "Mahindra Holidays",
         type: "Q2-2025",
       },
-      { id: "r3", date: "30 Oct", company: "Cipla", type: "Q2-2025" },
+      { id: "r3", date: "30 Oct", company: "Cipla", type: "Q2-2Gas" },
     ],
     economic: [
       {

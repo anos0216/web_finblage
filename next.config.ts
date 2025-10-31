@@ -11,6 +11,13 @@ images: {
         port: '',
         pathname: '/cmot-logos/**',
       },
+           {
+        // For IPO images (e.g., Tata Capital)
+        protocol: 'https',
+        hostname: 'companieslogo.com',
+        port: '',
+        pathname: '**',
+      },
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',

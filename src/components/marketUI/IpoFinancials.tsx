@@ -1,19 +1,32 @@
+"use client"; // Recharts requires this
+
 import React from 'react';
-import { BarChart2 } from 'lucide-react';
-import { UnifiedIpo } from '@/lib/market-data'; // Assuming financials type is on UnifiedIpo
+import { UnifiedIpo, IpoFinancial } from '@/lib/market-data';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer 
+} from 'recharts';
 
-// Placeholder for FinancialsChart
-const FinancialsChart = ({ financials }: { financials: any }) => (
-  <div className="bg-gray-100 p-4 rounded-lg text-center text-gray-600 h-full flex flex-col justify-center">
-    <BarChart2 className="mx-auto h-12 w-12 text-gray-400" />
-    <p className="mt-2 text-sm">Financials Bar Chart</p>
-    <p className="text-xs text-gray-500">(Placeholder)</p>
-  </div>
-);
+// Formatter for large numbers on the Y-axis
+const DataFormatter = (number: number) => {
+  if(number > 1000000000){
+    return (number/1000000000).toString() + 'B';
+  } else if(number > 1000000){
+    return (number/1000000).toString() + 'M';
+  } else if(number > 1000){
+    return (number/1000).toString() + 'K';
+  } else {
+    return number.toString();
+  }
+}
 
-type FinancialData = NonNullable<UnifiedIpo['financials']>[number];
-
-const IpoFinancials: React.FC<{ financials: FinancialData[] }> = ({ financials }) => {
+const IpoFinancials: React.FC<{ financials: IpoFinancial[] }> = ({ financials }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <h2 className="text-xl font-semibold text-gray-900 mb-4">Company Financials (in ₹ Cr)</h2>
@@ -42,9 +55,36 @@ const IpoFinancials: React.FC<{ financials: FinancialData[] }> = ({ financials }
           </table>
         </div>
 
-        {/* Right Side: Graph Placeholder */}
-        <div>
-          <FinancialsChart financials={financials} />
+        {/* Right Side: Graph */}
+        <div className="w-full h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={financials}
+              margin={{
+                top: 5,
+                right: 20,
+                left: 10,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+              <XAxis dataKey="period" fontSize={12} />
+              <YAxis 
+                fontSize={12} 
+                tickFormatter={DataFormatter}
+                label={{ value: 'Amount (in ₹ Cr)', angle: -90, position: 'insideLeft', offset: 0, style: {fontSize: '12px', fill: '#6b7280'} }}
+              />
+              <Tooltip 
+                formatter={(value: number) => [value.toLocaleString('en-IN'), null]}
+                labelStyle={{ color: '#000' }}
+              />
+              <Legend 
+                wrapperStyle={{ fontSize: '14px' }}
+              />
+              <Bar dataKey="revenue" fill="#3b82f6" name="Revenue" />
+              <Bar dataKey="pat" fill="#22c55e" name="Profit After Tax (PAT)" />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>
