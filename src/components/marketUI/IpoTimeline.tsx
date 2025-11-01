@@ -24,7 +24,7 @@ const IpoTimeline: React.FC<{ ipo: UnifiedIpo }> = ({ ipo }) => {
   if (events.length === 0) return null;
 
   return (
-    <div className="bg-white px-6 pt-6 pb-[96px] rounded-lg shadow-sm border border-gray-200">
+    <div className=" px-6 pt-6 pb-[96px]">
       <h2 className="text-xl font-semibold text-gray-900 mb-3">IPO Timeline</h2>
 
       {/* --- Horizontal Timeline (Desktop) --- */}

@@ -120,6 +120,11 @@ export interface IpoFinancial {
 export interface UnifiedIpo {
   slug: string;
   companyName: string;
+  website?: string;
+  parentCompany?: string;
+  sectorIndustry?: string;
+  businessOverview?: string;
+  keyManagement?: { name: string; designation: string }[];
   ipoType: string;
   status: "Open" | "Closed" | "Listing Soon" | "Listed" | "Upcoming"; // Added Upcoming
   imageUrl?: string;
@@ -144,27 +149,58 @@ export interface UnifiedIpo {
   drhpUrl?: string;
   registrar?: string; // New
   about?: string; // New (replaces richContent)
-  objectsOfTheOffer?: string[]; // New
+  objectsOfTheOffer?: string[]; // New (IPO Objective)
   strengths?: string[]; // New
   risks?: string[]; // New
+  offerBreakup?: { qib: string; nii: string; retail: string };
+  shareholderPattern?: { pre: string; post: string };
+  sellingShareholderData?: { name: string; shares: string }[];
+  capitalStructure?: {
+    paidUpEquityShareCapital: string;
+    authShareCapital: string;
+    faceValue: string;
+  };
+  peersCompany?: { name: string; ltp: string; p_e: string; roe: string }[];
+  valuationMetrics?: {
+    preIssuePe: string;
+    postIssuePe: string;
+    marketCap: string;
+  };
+  greyMarketPremium?: string;
+  postListing?: {
+    listingPrice: string;
+    listingGain: string;
+    marketCap: string;
+  };
 }
+
 
 const allIpoData: UnifiedIpo[] = [
   // --- Tata Capital (Updated with full dummy data) ---
   {
     slug: "tata-capital",
     companyName: "Tata Capital Ltd.",
+    website: "www.tatacapital.com",
+    parentCompany: "Tata Sons Limited",
+    sectorIndustry: "Financial Services",
+    businessOverview:
+      "Tata Capital Limited, a Systemically Important Non-Deposit accepting Core Investment Company (CIC-ND-SI) registered with the RBI, is the financial services flagship of the Tata Group. It provides a comprehensive suite of financial solutions through its subsidiaries. Its operations span consumer finance (personal loans, home loans, auto loans, credit cards), commercial finance (SME lending, corporate finance, infrastructure finance), and wealth management services. The company leverages its strong brand, extensive 'phygital' distribution network, and robust digital ecosystem to serve a diverse customer base, from retail individuals to large corporations.",
+    keyManagement: [
+      { name: "Rajiv Sabharwal", designation: "CEO & Managing Director" },
+      { name: "Saurabh Agrawal", designation: "Non-Executive Director" },
+      { name: "F. N. Subedar", designation: "Non-Executive Director" },
+    ],
     status: "Upcoming",
     ipoType: "Mainboard",
     imageUrl: "https://d1tymi9mhi46bx.cloudfront.net/cmot-logos/TataCapitalLtd_25713188_29113.png", // Using Tata Steel logo as placeholder
-    
+
     // --- List View Fields ---
     issueOpenDate: "Nov 10, 2025",
     issueCloseDate: "Nov 12, 2025",
     priceBand: "₹450 - ₹475",
     minInvestment: "₹14,250",
     issueSize: "₹3,500 Cr",
-    
+
     // --- Detail View Fields ---
     lotSize: "30",
     issueType: "Book Built Issue IPO",
@@ -179,27 +215,56 @@ const allIpoData: UnifiedIpo[] = [
 
     // --- Text Sections ---
     about: "Tata Capital Limited, a subsidiary of Tata Sons Limited, is the financial services arm of the Tata Group. It operates as a diversified financial services company, offering a wide range of products and services in areas such as consumer finance, commercial finance, investment banking, and wealth management.",
-    
+
     objectsOfTheOffer: [
-      "To augment the company's capital base to meet future capital requirements arising out of growth in its business and assets.",
-      "To receive the benefits of listing the equity shares on the stock exchanges.",
-      "To carry out the Offer for Sale of equity shares by the selling shareholders.",
-    ],
-    
-    strengths: [
-      "Strong and trusted brand name ('Tata') associated with quality and reliability.",
-      "Diversified business model with presence across multiple financial services sectors.",
-      "Robust risk management framework and healthy asset quality.",
-      "Strong parentage and support from Tata Sons and the wider Tata ecosystem.",
-    ],
-    
-    risks: [
-      "Operations are subject to stringent regulatory requirements by the RBI and other bodies.",
-      "Competition from established banks, NBFCs, and new-age fintech players.",
-      "Asset quality may be affected by economic downturns or volatility in the sectors it lends to.",
-      "Dependency on the stability of the Indian financial markets for liquidity and funding.",
+      "To augment the company's Tier-1 capital base to meet future capital requirements arising out of growth in its business, assets, and loan book.",
+      "To receive the benefits of listing the equity shares on the stock exchanges, which includes enhancing the brand's visibility and providing liquidity to existing shareholders.",
+      "To carry out the Offer for Sale (OFS) of equity shares by the promoting and selling shareholders.",
+      "To fund general corporate purposes, including investments in technology, brand building, and operational expenses."
     ],
 
+    strengths: [
+      "Strong and Trusted Brand: Unmatched brand equity of the 'Tata' name, synonymous with trust, quality, and ethical business practices across India.",
+      "Diversified Revenue Streams: Well-diversified business model with presence across multiple high-growth segments including retail, corporate, and wealth management, reducing dependency on any single sector.",
+      "Robust Risk Management Framework: A sophisticated, time-tested, and centralized framework for risk assessment, credit underwriting, and asset quality management, leading to stable NPA levels.",
+      "Strong Parentage (Tata Sons): Consistent financial and strategic support from the parent company, Tata Sons, providing access to low-cost capital and extensive ecosystem-wide synergies.",
+      "Experienced Management Team: Led by a seasoned management team with deep domain expertise in the financial services industry."
+    ],
+
+    risks: [
+      "Stringent Regulatory & Compliance Risk: Operations are subject to stringent regulatory requirements and supervision by the RBI. Any adverse changes in policy (e.g., capital adequacy, NPA recognition) can significantly impact profitability and operations.",
+      "Intense Market Competition: Faces intense competition from established commercial banks, other large NBFCs (like Bajaj Finance), and agile new-age fintech players, which can put pressure on margins.",
+      "Credit Risk & Asset Quality: The company's asset quality is inherently linked to the macroeconomic environment. An economic downturn could lead to an increase in non-performing assets (NPAs) and credit losses.",
+      "Liquidity & Funding Dependency: Like all NBFCs, the company is dependent on the stability of domestic and international financial markets to secure cost-effective liquidity and funding. Any disruption can affect cost of funds."
+    ],
+
+    offerBreakup: { qib: "50%", nii: "15%", retail: "35%" },
+    shareholderPattern: { pre: "75%", post: "60%" },
+    sellingShareholderData: [
+      { name: "Tata Sons Limited", shares: "5,00,00,000" },
+      { name: "Alpha TC Holdings Pte. Ltd.", shares: "1,00,00,000" },
+    ],
+    capitalStructure: {
+      paidUpEquityShareCapital: "₹1,000 Cr",
+      authShareCapital: "₹1,500 Cr",
+      faceValue: "₹10",
+    },
+    peersCompany: [
+      { name: "Bajaj Finance", ltp: "₹7,500", p_e: "35", roe: "20%" },
+      { name: "HDFC Bank", ltp: "₹1,500", p_e: "20", roe: "15%" },
+      { name: "ICICI Bank", ltp: "₹900", p_e: "18", roe: "14%" },
+    ],
+    valuationMetrics: {
+      preIssuePe: "25",
+      postIssuePe: "30",
+      marketCap: "₹1,00,000 Cr",
+    },
+    greyMarketPremium: "₹150 - ₹175",
+    postListing: {
+      listingPrice: "₹625",
+      listingGain: "31.58%",
+      marketCap: "₹1,31,250 Cr",
+    },
     // --- Financials (Table & Graph) ---
     financials: [
       { period: 'FY23', revenue: 10500, pat: 1800, eps: 12.5 },

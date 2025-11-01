@@ -40,7 +40,7 @@ const Navbar: React.FC = () => {
       className={
         // Base classes applied to all routes
         // FIX: Changed z-20 to z-40 to be above MarketTabNav (z-30)
-        "flex z-40 w-full items-center bg-transparent justify-between lg:px-8 sm:px-5 py-4 px-3 fixed top-0 left-0 text-white border-b" // Use 'fixed' on all other routes
+        "flex z-40 w-full items-center bg-transparent justify-between lg:px-8 sm:px-5 py-4 px-3 absolute top-0 left-0 text-white border-b" // Use 'fixed' on all other routes
       }
     >
       <div className="text-2xl z-20 font-bold">
@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
                 href={menu.path}
                 // FIX: Conditional hover color
                 className={
-                  " transition-colors duration-300 hover:text-white text-gray-600"
+                  " transition-colors duration-300 hover:text-white text-gray-400"
                 }
               >
                 {menu.name}
