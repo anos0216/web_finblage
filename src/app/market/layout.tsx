@@ -1,7 +1,8 @@
 // src/app/market/layout.tsx
 import React from 'react';
-import MarketTabNav from '@/components/marketUI/MarketTabNav';
 
+// This layout wraps ALL /market routes
+// It no longer contains the MarketTabNav
 export default function MarketLayout({
   children,
 }: {
@@ -9,17 +10,11 @@ export default function MarketLayout({
 }) {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* This navigation component is a Client Component (`"use client"`)
-        to track the active path and style the tabs accordingly.
+      {/* The children will either be:
+        1. The (overview) layout (which has tabs)
+        2. The ipo/[slug] page (which does not)
       */}
-      <MarketTabNav />
-
-      {/* This `children` prop will be the content from the active
-        tab's page.tsx file (e.g., page.tsx, ipo/page.tsx, etc.)
-      */}
-      <main className="container mx-auto px-4 py-8">
-        {children}
-      </main>
+      {children}
     </div>
   );
 }

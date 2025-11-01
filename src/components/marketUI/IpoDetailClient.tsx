@@ -45,10 +45,10 @@ const IpoDetailClient: React.FC<{ ipo: UnifiedIpo }> = ({ ipo }) => {
 
   return (
     // Use a wider container for this layout
-    <div className="max-w-6xl mx-auto space-y-6 py-8">
+    <div className="w-full mx-auto space-y-6 ">
       {/* Header */}
       {/* FIX: Changed to bg-primary, removed border */}
-      <div className="relative p-6 rounded-lg shadow-sm bg-primary overflow-hidden">
+      <div className="relative px-6 pb-20 pt-28 shadow-sm bg-primary overflow-hidden">
         {/* FIX: Changed z-50 to z-0 to put pattern in background */}
         <div className="absolute inset-0 z-0 opacity-[0.07]">
           {/* ... svg pattern (static) ... */}
@@ -85,14 +85,14 @@ const IpoDetailClient: React.FC<{ ipo: UnifiedIpo }> = ({ ipo }) => {
 
         {/* FIX: Added relative z-10 to put content above pattern */}
         <div className="relative z-10 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-lg bg-gray-100 border flex items-center justify-center overflow-hidden flex-shrink-0">
+          <div className="flex bg-white/10 backdrop-blur-sm text-white text-xs font-semibold mb-3 px-3 py-1 rounded items-center gap-4">
+            <div className="w-12 h-12 rounded-lg bg-gray-100 border flex items-center justify-center overflow-hidden flex-shrink-0">
               {hasImage ? (
                 <Image
                   src={ipo.imageUrl!}
                   alt={ipo.companyName}
-                  width={64}
-                  height={64}
+                  width={48}
+                  height={48}
                   className="object-contain"
                 />
               ) : (
@@ -107,7 +107,7 @@ const IpoDetailClient: React.FC<{ ipo: UnifiedIpo }> = ({ ipo }) => {
                 {ipo.companyName}
               </h1>
               {/* FIX: Changed text-gray-600 to text-gray-200 */}
-              <p className="text-sm text-gray-200">{ipo.issueType}</p>
+              <p className="text-sm pl-1 text-gray-200">{ipo.issueType}</p>
             </div>
           </div>
           {ipo.drhpUrl && (
@@ -115,7 +115,7 @@ const IpoDetailClient: React.FC<{ ipo: UnifiedIpo }> = ({ ipo }) => {
             <Button
               asChild
               variant="outline"
-              className="flex-shrink-0 border-gray-300 text-gray-600 hover:bg-white hover:text-primary"
+              className="flex-shrink-0 bg-white border-gray-300 text-gray-800 hover:bg-gray-100 hover:text-primary"
             >
               <a href={ipo.drhpUrl} target="_blank" rel="noopener noreferrer">
                 View DRHP <ExternalLink size={16} className="ml-2" />
