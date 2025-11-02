@@ -150,3 +150,28 @@ export const getMarketInsightItem = (slug: string | undefined | null) => fetchIt
 export const getMarketOutlookItem = (slug: string | undefined | null) => fetchItemDetails<ArticleItem>("Items2", slug);
 export const getMergerAcquisitionItem = (slug: string | undefined | null) => fetchItemDetails<ArticleItem>("MergerAquisition", slug);
 export const getSpotlightItem = (slug: string | undefined | null) => fetchItemDetails<ArticleItem>("Courses", slug);
+
+// --- NEW: Fetches news by company symbols ---
+export const getPortfolioNews = async (
+  symbols: string[],
+  page: number = 1,
+  limit: number = 10
+): Promise<ApiListResponse<NewsItem>> => {
+  const url = `${API_BASE_URL}/portfolio/news`;
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ symbols, page, limit }),
+      cache: "no-store",
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch portfolio news for symbols: ${symbols.join(", ")}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("API Portfolio News Fetch Error:", error);
+    return { dataItems: [], pagingMetadata: { hasNext: false } };
+  }
+};

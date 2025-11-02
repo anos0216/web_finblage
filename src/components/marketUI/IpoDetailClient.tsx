@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { UnifiedIpo } from "@/lib/market-data";
+import { NewsItem } from "@/types/finblage";
 import { Button } from "@/components/ui/button";
 import {
   ExternalLink,
@@ -13,10 +14,6 @@ import {
   TrendingUp,
   Percent,
   Wallet,
-  BookOpen,
-  ShieldCheck,
-  AlertTriangle,
-  Target,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
@@ -26,18 +23,19 @@ import IpoTimeline from "./IpoTimeline";
 import IpoFinancials from "./IpoFinancials";
 import IpoTextSection from "./IpoTextSection";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-// Placeholder for RichTextRenderer
-const RichTextRenderer = ({ content }: { content: any }) => (
-  <div className="prose prose-sm max-w-none text-gray-700">
-    <p>{content || "No 'About' information available."}</p>
-  </div>
-);
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import AnimatedArticleCard from "@/components/shared/AnimatedArticleCard";
 
 // Colors for the pie chart
 const PIE_COLORS = ["#3b82f6", "#10b981", "#f59e0b"];
 
-const IpoDetailClient: React.FC<{ ipo: UnifiedIpo }> = ({ ipo }) => {
+const IpoDetailClient: React.FC<{ ipo: UnifiedIpo, relatedNews: NewsItem[] }> = ({ ipo, relatedNews }) => {
   const hasImage = ipo.imageUrl && ipo.imageUrl.length > 0;
 
   const InfoItem = ({
@@ -124,7 +122,7 @@ const IpoDetailClient: React.FC<{ ipo: UnifiedIpo }> = ({ ipo }) => {
               )}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">
+              <h1 className="text-2xl font-bold text-white" style={{fontFamily: "var(--font-oxygen)"}}>
                 {ipo.companyName}
               </h1>
               <p className="text-sm pl-1 text-gray-200">{ipo.issueType}</p>
@@ -144,7 +142,7 @@ const IpoDetailClient: React.FC<{ ipo: UnifiedIpo }> = ({ ipo }) => {
         </div>
 
         <div className="relative z-10 mt-5 md:px-44">
-          <h2 className="text-lg font-semibold text-white mb-2">IPO Details</h2>
+          <h2 className="text-lg font-semibold text-white mb-2" style={{fontFamily: "var(--font-oxygen)"}}>IPO Details</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-y-5 gap-x-4">
             <InfoItem label="Price Band" value={ipo.priceBand} />
             <InfoItem
@@ -173,6 +171,34 @@ const IpoDetailClient: React.FC<{ ipo: UnifiedIpo }> = ({ ipo }) => {
           {/* Financials Section */}
           {ipo.financials && ipo.financials.length > 0 && (
             <IpoFinancials financials={ipo.financials} />
+          )}
+
+          {/* Related News Section */}
+          {relatedNews.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Related News</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Carousel
+                  opts={{
+                    align: "start",
+                    loop: relatedNews.length > 1,
+                  }}
+                  className="w-full"
+                >
+                  <CarouselContent>
+                    {relatedNews.map((newsItem) => (
+                      <CarouselItem key={newsItem.id} className="md:basis-1/2">
+                        <AnimatedArticleCard item={newsItem} basePath="/news" />
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel>
+              </CardContent>
+            </Card>
           )}
 
           {/* Business Overview */}
@@ -236,7 +262,7 @@ const IpoDetailClient: React.FC<{ ipo: UnifiedIpo }> = ({ ipo }) => {
         </div>
 
         {/* --- Sidebar (Right) --- */}
-        <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-2 h-fit">
+        <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-20 h-fit">
           {/* Company Overview Card */}
           <Card>
             <CardHeader>

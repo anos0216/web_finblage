@@ -32,6 +32,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-title"
+      style={{fontFamily: "var(--font-oxygen)"}}
       className={cn("leading-none font-semibold", className)}
       {...props}
     />
