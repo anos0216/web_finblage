@@ -59,7 +59,10 @@ const StockCandle = ({
 // --- Reusable AnimatedQuote Component (No animation logic) ---
 const AnimatedQuote = ({ staticText }: { staticText: string }) => {
   return (
-    <h2 className="quote-item hero-title text-2xl md:text-3xl font-bold leading-tight min-h-[3rem]" style={{fontFamily: "var(--font-oxygen)"}}>
+    <h2
+      className="quote-item hero-title text-2xl text-center md:text-3xl font-bold leading-tight min-h-[3rem]"
+      style={{ fontFamily: "var(--font-oxygen)" }}
+    >
       {/* Static text part (fades in with parent) */}
       <span className="hero-title-static">{staticText} </span>
       {/* Animated text part (types) */}
@@ -77,8 +80,8 @@ const Hero = () => {
   // Data from animation_text.txt (Renamed staticSlogan to staticText for consistency)
   const quotes = [
     {
-      staticText: "The Market.",
-      animatedWords: ["Decoded.", "Quantified.", "Explained.", "Simplified."],
+      staticText: "The Market ",
+      animatedWords: ["Decoded", "Quantified", "Explained", "Simplified"],
     },
   ];
 
@@ -107,7 +110,9 @@ const Hero = () => {
 
         if (animatedText && cursor && quoteData) {
           // Create a separate timeline for this single quote's animation
-          const quoteTl = gsap.timeline();
+          const quoteTl = gsap.timeline({
+            repeat: -1, // <-- CHANGE 1: Loop this timeline forever
+          });
 
           // Make cursor and text area visible
           quoteTl.to([animatedText, cursor], { opacity: 1 }, 0);
@@ -120,26 +125,22 @@ const Hero = () => {
               ease: "none",
             });
 
-            // If it's not the last word, pause and backspace
-            if (wordIndex < quoteData.animatedWords.length - 1) {
-              quoteTl.to(
-                animatedText,
-                // FIX: Changed ease from "none" to "power1.in" for a natural backspace
-                {
-                  text: { value: "", rtl: true },
-                  duration: word.length * 0.08,
-                  ease: "power1.in",
-                },
-                "+=1.5" // Pause
-              );
-            }
+            // <-- CHANGE 2: Removed 'if' condition to always backspace
+            quoteTl.to(
+              animatedText,
+              {
+                text: { value: "", rtl: true },
+                duration: word.length * 0.08,
+                ease: "power1.in",
+              },
+              "+=1.5" // Pause
+            );
           });
 
-          // Hide cursor at the end of this quote's animation
-          quoteTl.to(cursor, { opacity: 0, duration: 0.3 });
+          // <-- CHANGE 3: Removed the 'hide cursor' tween
+          // quoteTl.to(cursor, { opacity: 0, duration: 0.3 });
 
           // Add this quote's timeline to the master timeline
-          // This makes them run one after another.
           masterTl.add(quoteTl);
         }
       });
@@ -241,12 +242,20 @@ const Hero = () => {
       </div>
 
       {/* --- NEW Content Layout --- */}
-      <div className="container flex mx-auto px-4 relative z-10">
+      <div className="container flex flex-col mx-auto px-4 relative z-10">
         {/* Grid for the 4 quotes */}
         <div className="hero-quote-grid mx-auto opacity-0">
           {quotes.map((quote, index) => (
             <AnimatedQuote key={index} staticText={quote.staticText} />
           ))}
+
+          <h2
+            style={{ fontFamily: "var(--font-oxygen)" }}
+            className="text-center md:text-2xl text-gray-100 text-xl md:w-[70%] mx-auto"
+          >
+            Research That Empowers Your Investments Empowering Investors with
+            In-Depth Research, Actionable Insights, and Market Clarity
+          </h2>
         </div>
       </div>
     </div>

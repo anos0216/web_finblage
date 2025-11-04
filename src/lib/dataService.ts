@@ -38,7 +38,7 @@ async function fetchFromApi<T>(
 ): Promise<ApiListResponse<T>> {
   const url = `${API_BASE_URL}/collections/${collection}/items?limit=${ITEMS_PER_PAGE}&page=${page}`;
   try {
-    const response = await fetch(url, { cache: "no-store" });
+    const response = await fetch(url);
     if (!response.ok) throw new Error(`Failed to fetch ${collection} list`);
     return response.json();
   } catch (error) {
