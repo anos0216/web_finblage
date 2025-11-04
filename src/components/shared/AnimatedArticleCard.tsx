@@ -66,9 +66,12 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
   const title = isNews
     ? (item as NewsItem).data.richtext
     : (item as ArticleItem).data.title;
+    
+  // FIX: Check for glimpse first, then fall back to glimpses
   const description = isNews
     ? (item as NewsItem).data.abstract
-    : (item as ArticleItem).data.glimpses;
+    : (item as ArticleItem).data.glimpse ?? (item as ArticleItem).data.glimpses;
+    
   const image =
     "image" in item.data ? (item as ArticleItem).data.image : undefined;
 

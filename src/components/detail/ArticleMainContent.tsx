@@ -12,7 +12,8 @@ export const ArticleMainContent: React.FC<ArticleMainContentProps> = ({
   const isNews = "richtext" in item.data;
   const data = item.data as any;
 
-  const abstract = isNews ? data.abstract : data.glimpses;
+  // FIX: Check for glimpse first, then fall back to glimpses
+  const abstract = isNews ? data.abstract : data.glimpse ?? data.glimpses;
   const body = isNews ? data.subHeadline : data.body;
 
   return (

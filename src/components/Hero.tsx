@@ -248,13 +248,15 @@ const Hero = () => {
           {quotes.map((quote, index) => (
             <AnimatedQuote key={index} staticText={quote.staticText} />
           ))}
-
-          <h2
+          <h1
             style={{ fontFamily: "var(--font-oxygen)" }}
-            className="text-center md:text-2xl text-gray-100 text-xl md:w-[70%] mx-auto"
+            className="text-center md:text-3xl mt-2 mb-1 text-2xl "
           >
-            Research That Empowers Your Investments Empowering Investors with
-            In-Depth Research, Actionable Insights, and Market Clarity
+            Research That Empowers Your Investments
+          </h1>
+          <h2  style={{fontFamily: "var(--font-inter)"}} className="text-center md:text-2xl text-gray-200 text-xl md:w-[70%] mx-auto">
+            Empowering Investors with In-Depth Research, Actionable Insights,
+            and Market Clarity
           </h2>
         </div>
       </div>

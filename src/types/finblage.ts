@@ -1,3 +1,5 @@
+// src/types/finblage.ts
+
 // Generic type for a single API item response
 export interface ApiSingleResponse<T> {
   dataItem: T;
@@ -43,13 +45,16 @@ export interface ArticleItem {
   id: string;
   data: {
     title: string;
-    glimpses: string; // Use glimpses as the description/abstract
+    subtitle?: string; 
+    glimpse?: string;  // For Outlook, Spotlight
+    glimpses?: string; // For Insights, Merger (as per user)
     image: string;
     category?: string;
     date?: string; // Standard date field
     coursePrice?: string; // Alternative date field for Spotlight collection
     body: RichTextNode;
     'link-items-title'?: string;
+    'link-items2-title'?: string; // This is the slug key for Market Outlook
     'link-merger-aquisition-title'?: string;
     'link-courses-title'?: string;
   };

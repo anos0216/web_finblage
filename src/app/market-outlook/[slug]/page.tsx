@@ -1,75 +1,103 @@
-"use client";
+"use client"; // 1. Converted to Client Component
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react"; // 2. Imported hooks
 import { useParams, notFound } from "next/navigation";
-import { useData } from "@/context/DataContext"; //
-import { ArticleItem } from "@/types/finblage"; //
-import { ArticleDetailHero } from "@/components/detail/ArticleDetailHero"; //
-import { ArticleMainContent } from "@/components/detail/ArticleMainContent"; //
-import { ArticleSidebar } from "@/components/detail/ArticleSidebar"; //
-import { ArticleDetailSkeleton } from "@/components/detail/ArticleDetailSkeleton"; //
+import { useData } from "@/context/DataContext"; // 3. Imported useData
+import { ArticleItem } from "@/types/finblage";
+import {
+  FiiDiiSummary,
+  HistoricalActivity,
+  StockData,
+  TrendingStocks,
+} from "@/lib/market-data";
+import {
+  getFiiDiiData,
+  getIndicesData,
+  getTrendingStocksData,
+} from "@/lib/market-data"; // 4. Using client-side data fetchers
+import MarketOutlookDetailClient from "@/components/detail/MarketOutlookDetailClient";
+import { ArticleDetailSkeleton } from "@/components/detail/ArticleDetailSkeleton"; // 5. Added Skeleton for loading
 
+// This is now a Client Component
 export default function ArticleDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
   const itemType = "market-outlook";
-  const basePath = "/market-outlook";
-  const sidebarTitle = "More Outlooks";
 
+  // 6. Get data from DataContext
   const {
     getItemBySlug,
     marketOutlook,
-    isLoading,
+    isLoading: isContextLoading,
     fetchInitialData,
-  } = useData(); //
+  } = useData();
+
+  // 7. Add state for supplemental data (FII/DII, Indices, etc.)
+  const [supplementalData, setSupplementalData] = useState<{
+    fiiDiiData: {
+      summary: FiiDiiSummary;
+      daily: HistoricalActivity[];
+      monthly: HistoricalActivity[];
+    };
+    indices: StockData[];
+    trendingStocks: TrendingStocks;
+  } | null>(null);
+  
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (marketOutlook.length === 0) {
-      fetchInitialData(); //
-    }
+    const loadData = async () => {
+      setIsLoading(true);
+      
+      // 8. Fetch context data if it's not already loaded
+      if (marketOutlook.length === 0) {
+        await fetchInitialData();
+      }
+      
+      // 9. Fetch all supplemental data in parallel
+      try {
+        const [fiiDii, indicesData, trending] = await Promise.all([
+          getFiiDiiData(),
+          getIndicesData(),
+          getTrendingStocksData(),
+        ]);
+        setSupplementalData({
+          fiiDiiData: fiiDii,
+          indices: indicesData,
+          trendingStocks: trending,
+        });
+      } catch (error) {
+        console.error("Failed to fetch supplemental data:", error);
+      }
+      
+      setIsLoading(false);
+    };
+
+    loadData();
   }, [marketOutlook.length, fetchInitialData]);
 
-  if (isLoading || marketOutlook.length === 0) {
+  // 10. Show skeleton while loading
+  if (isLoading || isContextLoading || !supplementalData) {
     return <ArticleDetailSkeleton />;
   }
 
-  const articleItem = getItemBySlug(slug, itemType) as ArticleItem | undefined; //
+  // 11. Get the specific article from the now-populated context
+  const articleItem = getItemBySlug(slug, itemType) as ArticleItem | undefined;
 
   if (!articleItem) {
     notFound();
   }
 
-  const article = articleItem.data;
-  const dateValue = article.date || article.coursePrice; //
+  const allItems = marketOutlook;
 
-  const otherArticles = marketOutlook
-    .filter((item) => item.id !== articleItem.id)
-    .slice(0, 5); 
-
+  // 12. Render the client component with all data
   return (
-    <>
-      <ArticleDetailHero
-        title={article.title}
-        category={article.category}
-        date={dateValue!}
-        imageUrl={article.image}
-        itemId={articleItem.id} // <-- FIX: Changed from article.title to articleItem.id
-      />
-
-      <div className="bg-gray-50 pt-18 pb-12 md:pt-40">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-            <ArticleMainContent item={articleItem} />
-            <ArticleSidebar
-            currentItemId={article.title}
-            allItemsForTrending={marketOutlook}
-              title={sidebarTitle}
-              items={otherArticles}
-              basePath={basePath}
-            />
-          </div>
-        </div>
-      </div>
-    </>
+    <MarketOutlookDetailClient
+      item={articleItem}
+      fiiDiiData={supplementalData.fiiDiiData}
+      indices={supplementalData.indices}
+      trendingStocks={supplementalData.trendingStocks}
+      allItems={allItems}
+    />
   );
 }
