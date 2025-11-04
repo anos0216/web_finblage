@@ -55,7 +55,7 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
   const [isNoteMinimized, setIsNoteMinimized] = useState(false); // Added
 
   // --- Get Note functions from Context ---
-  const { getNote, updateNote } = useData(); //
+  const { getNote, updateNote, openChatbot } = useData(); // <-- ADDED openChatbot
   const currentNote = getNote(itemId) || ""; //
 
   return (
@@ -100,7 +100,7 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
 
         {/* Content Container */}
         <div className="container mx-auto px-4 relative z-10">
-          <div className="relative md:flex md:items-center min-h-[520px] md:min-h-[350px]">
+          <div className="relative md:flex md:items-center min-h-[520px] md:min-h-[420px]">
             {/* --- Text Content (Left) --- */}
             <div className="md:w-full lg:w-3/5 py-12 md:py-16">
               <div className="max-w-xl">
@@ -139,9 +139,12 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
                   >
                     <Share2 size={18} />
                   </button>
+                  
+                  {/* --- AI CHATBOT TRIGGER --- */}
                   <button
                     aria-label="AI Summary"
                     className="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-300 hover:text-white"
+                    onClick={openChatbot} // <-- CONNECTED
                   >
                     <Sparkles size={18} />
                   </button>
@@ -213,8 +216,8 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
             {/* --- Image (Floating Right) --- */}
             <div
               className="
-            absolute top-[58%] md:absolute md:right-0 md:top-16 md:h-[60%] 
-            w-full md:w-3/S5 lg:w-[45%] 
+            absolute top-[58%] md:absolute md:right-0 md:top-[112px] md:h-[60%] 
+            w-full md:w-3/5 lg:w-[45%] 
             h-64 sm:h-80
             md:pl-8
           "

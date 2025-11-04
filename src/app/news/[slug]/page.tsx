@@ -90,6 +90,7 @@ export default function NewsDetailPage() {
     fetchInitialData,
     getNote,
     updateNote,
+    openChatbot, // <-- ADDED openChatbot
   } = useData(); //
 
   useEffect(() => {
@@ -162,7 +163,7 @@ export default function NewsDetailPage() {
           <div className="max-w-4xl">
             {/* Category */}
             <span
-              className="inline-block bg-white/10 backdrop-blur-sm text-white text-xs font-semibold mb-4 px-3 py-1 rounded"
+              className="inline-block mt-5 bg-white/10 backdrop-blur-sm text-white text-xs font-semibold mb-2 px-3 py-1 rounded"
               style={{ fontFamily: "var(--font-inter)", fontWeight: 500 }}
             >
               {article.category}
@@ -195,9 +196,12 @@ export default function NewsDetailPage() {
                   {" "}
                   <Share2 size={18} />{" "}
                 </button>
+                
+                {/* --- AI CHATBOT TRIGGER --- */}
                 <button
                   aria-label="AI Summary"
                   className="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-300 hover:text-white"
+                  onClick={openChatbot} // <-- CONNECTED
                 >
                   {" "}
                   <Sparkles size={18} />{" "}

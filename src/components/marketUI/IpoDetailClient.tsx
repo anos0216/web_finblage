@@ -35,7 +35,10 @@ import AnimatedArticleCard from "@/components/shared/AnimatedArticleCard";
 // Colors for the pie chart
 const PIE_COLORS = ["#3b82f6", "#10b981", "#f59e0b"];
 
-const IpoDetailClient: React.FC<{ ipo: UnifiedIpo, relatedNews: NewsItem[] }> = ({ ipo, relatedNews }) => {
+const IpoDetailClient: React.FC<{
+  ipo: UnifiedIpo;
+  relatedNews: NewsItem[];
+}> = ({ ipo, relatedNews }) => {
   const hasImage = ipo.imageUrl && ipo.imageUrl.length > 0;
 
   const InfoItem = ({
@@ -122,7 +125,10 @@ const IpoDetailClient: React.FC<{ ipo: UnifiedIpo, relatedNews: NewsItem[] }> = 
               )}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white" style={{fontFamily: "var(--font-oxygen)"}}>
+              <h1
+                className="text-2xl font-bold text-white"
+                style={{ fontFamily: "var(--font-oxygen)" }}
+              >
                 {ipo.companyName}
               </h1>
               <p className="text-sm pl-1 text-gray-200">{ipo.issueType}</p>
@@ -142,7 +148,12 @@ const IpoDetailClient: React.FC<{ ipo: UnifiedIpo, relatedNews: NewsItem[] }> = 
         </div>
 
         <div className="relative z-10 mt-5 md:px-44">
-          <h2 className="text-lg font-semibold text-white mb-2" style={{fontFamily: "var(--font-oxygen)"}}>IPO Details</h2>
+          <h2
+            className="text-lg font-semibold text-white mb-2"
+            style={{ fontFamily: "var(--font-oxygen)" }}
+          >
+            IPO Details
+          </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-y-5 gap-x-4">
             <InfoItem label="Price Band" value={ipo.priceBand} />
             <InfoItem

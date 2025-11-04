@@ -91,6 +91,11 @@ interface DataContextState {
   notes: Record<string, string>; // { [itemId]: "note content" }
   updateNote: (itemId: string, note: string) => void;
   getNote: (itemId: string) => string | undefined;
+
+  // AI Chatbot state
+  isChatbotOpen: boolean;
+  openChatbot: () => void;
+  closeChatbot: () => void;
 }
 
 // Create the context
@@ -113,6 +118,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
   // --- State for Saved Items & Notes ---
   const [savedItems, setSavedItems] = useState<string[]>([]);
   const [notes, setNotes] = useState<Record<string, string>>({});
+  
+  // --- State for AI Chatbot ---
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
   // --- Load from localStorage on mount ---
   useEffect(() => {
@@ -238,6 +246,11 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
     return notes[itemId];
   };
 
+  // --- Functions for AI Chatbot ---
+  const openChatbot = useCallback(() => setIsChatbotOpen(true), []);
+  const closeChatbot = useCallback(() => setIsChatbotOpen(false), []);
+
+
   // --- Provide context value ---
   const value = {
     news,
@@ -255,6 +268,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
     notes,
     updateNote,
     getNote,
+    isChatbotOpen,
+    openChatbot,
+    closeChatbot,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

@@ -8,7 +8,7 @@ import { TextPlugin } from "gsap/TextPlugin"; // Import TextPlugin
 // Register the plugin
 gsap.registerPlugin(TextPlugin);
 
-// --- New StockCandle Component ---
+// --- StockCandle Component (Unchanged) ---
 const StockCandle = ({
   className,
   isPositive = true,
@@ -56,86 +56,136 @@ const StockCandle = ({
   );
 };
 
-// --- Updated Hero Component ---
+// --- Reusable AnimatedQuote Component (No animation logic) ---
+const AnimatedQuote = ({ staticText }: { staticText: string }) => {
+  return (
+    <h2 className="quote-item hero-title text-2xl md:text-3xl font-bold leading-tight min-h-[3rem]" style={{fontFamily: "var(--font-oxygen)"}}>
+      {/* Static text part (fades in with parent) */}
+      <span className="hero-title-static">{staticText} </span>
+      {/* Animated text part (types) */}
+      <span className="hero-animated-text opacity-0 text-yellow-400"></span>
+      {/* Blinking cursor */}
+      <span className="hero-cursor opacity-0 inline-block w-1 h-7 md:h-8 ml-1 bg-yellow-400 animate-pulse"></span>
+    </h2>
+  );
+};
+
+// --- Updated Hero Component (Contains all animation logic) ---
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Data from animation_text.txt (Renamed staticSlogan to staticText for consistency)
+  const quotes = [
+    {
+      staticText: "The Market.",
+      animatedWords: ["Decoded.", "Quantified.", "Explained.", "Simplified."],
+    },
+  ];
 
   useGSAP(
     () => {
       const random = gsap.utils.random;
 
-      // --- 1. Typing Animation ---
-      const titleEl = containerRef.current?.querySelector(".hero-title");
-      const subtitleEl = containerRef.current?.querySelector(".hero-subtitle");
+      // --- 1. Sequential Typing Animation ---
+      const masterTl = gsap.timeline({ delay: 0.5 }); // Master timeline for sequencing
 
-      if (titleEl && subtitleEl) {
-        // Store original text
-        const titleText = titleEl.textContent;
-        const subtitleText = subtitleEl.textContent;
-        
-        // Clear text content to prepare for typing
-        titleEl.textContent = "";
-        subtitleEl.textContent = "";
+      // Fade in the grid container first
+      masterTl.fromTo(
+        ".hero-quote-grid",
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+      );
 
-        const textTl = gsap.timeline();
-        textTl
-          .to(titleEl, {
-            duration: titleText!.length * 0.07, // Adjust speed
-            text: titleText,
-            ease: "none",
-          })
-          .to(
-            subtitleEl,
-            {
-              duration: subtitleText!.length * 0.04, // Adjust speed
-              text: subtitleText,
+      const quoteElements = gsap.utils.toArray(".quote-item");
+
+      quoteElements.forEach((element, index) => {
+        const animatedText = (element as Element).querySelector(
+          ".hero-animated-text"
+        );
+        const cursor = (element as Element).querySelector(".hero-cursor");
+        const quoteData = quotes[index]; // Get the corresponding words
+
+        if (animatedText && cursor && quoteData) {
+          // Create a separate timeline for this single quote's animation
+          const quoteTl = gsap.timeline();
+
+          // Make cursor and text area visible
+          quoteTl.to([animatedText, cursor], { opacity: 1 }, 0);
+
+          // Loop through words for this quote
+          quoteData.animatedWords.forEach((word, wordIndex) => {
+            quoteTl.to(animatedText, {
+              text: word,
+              duration: word.length * 0.12,
               ease: "none",
-            },
-            "-=0.5" // Start subtitle slightly before title finishes
-          );
-      }
+            });
 
-      // --- 2. Candle Animation ---
+            // If it's not the last word, pause and backspace
+            if (wordIndex < quoteData.animatedWords.length - 1) {
+              quoteTl.to(
+                animatedText,
+                // FIX: Changed ease from "none" to "power1.in" for a natural backspace
+                {
+                  text: { value: "", rtl: true },
+                  duration: word.length * 0.08,
+                  ease: "power1.in",
+                },
+                "+=1.5" // Pause
+              );
+            }
+          });
+
+          // Hide cursor at the end of this quote's animation
+          quoteTl.to(cursor, { opacity: 0, duration: 0.3 });
+
+          // Add this quote's timeline to the master timeline
+          // This makes them run one after another.
+          masterTl.add(quoteTl);
+        }
+      });
+
+      // --- 2. Candle Animation (Unchanged, runs in parallel) ---
       const candles = gsap.utils.toArray(".shape");
       candles.forEach((candle) => {
         const body = (candle as Element).querySelector(".candle-body");
         const topWick = (candle as Element).querySelector(".candle-wick-top");
-        const bottomWick = (candle as Element).querySelector(".candle-wick-bottom");
+        const bottomWick = (candle as Element).querySelector(
+          ".candle-wick-bottom"
+        );
 
-        // Create a unique, repeating timeline for each candle
         const candleTl = gsap.timeline({
           repeat: -1,
-          repeatDelay: random(1, 4), // Wait a random time before repeating
-          yoyo: true, // Animate back and forth
+          repeatDelay: random(1, 4),
+          yoyo: true,
         });
 
         candleTl
           .to(
             body,
             {
-              scaleY: random(0.2, 1.5), // Randomly scale body height
+              scaleY: random(0.2, 1.5),
               duration: random(1, 3),
               ease: "power1.inOut",
             },
-            0 // Start at the beginning
+            0
           )
           .to(
             topWick,
             {
-              scaleY: random(0.1, 2), // Randomly scale top wick
+              scaleY: random(0.1, 2),
               duration: random(1, 3),
               ease: "power1.inOut",
             },
-            0 // Start at the same time
+            0
           )
           .to(
             bottomWick,
             {
-              scaleY: random(0.1, 2), // Randomly scale bottom wick
+              scaleY: random(0.1, 2),
               duration: random(1, 3),
               ease: "power1.inOut",
             },
-            0 // Start at the same time
+            0
           );
       });
     },
@@ -145,7 +195,7 @@ const Hero = () => {
   return (
     <div
       ref={containerRef}
-      className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] text-white py-16 md:py-24 overflow-hidden"
+      className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] text-white py-24 md:py-40 overflow-hidden"
     >
       <div className="absolute inset-0  z-0 opacity-[0.07]">
         {/* ... svg pattern (static) ... */}
@@ -180,7 +230,7 @@ const Hero = () => {
         </svg>
       </div>
 
-      {/* FIX: Replaced TickerShapes with animating StockCandles */}
+      {/* Animating StockCandles (Unchanged) */}
       <div className="absolute inset-0 z-0">
         <StockCandle className="top-[15%] left-[10%]" isPositive={true} />
         <StockCandle className="top-[30%] left-[80%]" isPositive={false} />
@@ -190,14 +240,14 @@ const Hero = () => {
         <StockCandle className="top-[50%] left-[40%]" isPositive={true} />
       </div>
 
-      <div className="container mx-auto px-4 text-center relative z-10">
-        <h1 className="hero-title text-4xl md:text-6xl font-bold leading-tight mb-4 min-h-[4rem] md:min-h-[5rem]">
-          Unlocking Financial Clarity
-        </h1>
-        <p className="hero-subtitle text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8 min-h-[6rem]">
-          Your trusted source for market insights, news, and in-depth analysis
-          to guide your investment decisions.
-        </p>
+      {/* --- NEW Content Layout --- */}
+      <div className="container flex mx-auto px-4 relative z-10">
+        {/* Grid for the 4 quotes */}
+        <div className="hero-quote-grid mx-auto opacity-0">
+          {quotes.map((quote, index) => (
+            <AnimatedQuote key={index} staticText={quote.staticText} />
+          ))}
+        </div>
       </div>
     </div>
   );
