@@ -10,14 +10,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import {  FileText, Globe } from "lucide-react";
 import {
-  DollarSign,
-  BarChart,
-  FileText,
-  Globe,
-} from "lucide-react";
+  BarChart as RechartsBarChart, // Renamed to avoid conflict
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
-// Re-usable component for the animated number
+// --- Sub-components (AnimatedNumber, ParticipantCard, FilterButton) ---
+
 const AnimatedNumber = ({ value }: { value: number }) => {
   const formatted = new Intl.NumberFormat("en-IN", {
     style: "decimal",
@@ -27,7 +33,6 @@ const AnimatedNumber = ({ value }: { value: number }) => {
   return <span>{formatted}</span>;
 };
 
-// Summary Card for FII/DII
 const ParticipantCard: React.FC<{
   title: string;
   data: ActivityData;
@@ -68,74 +73,13 @@ const ParticipantCard: React.FC<{
   );
 };
 
-// Historical Card
-const HistoricalCard: React.FC<{
-  item: HistoricalActivity;
-  category: string;
-}> = ({ item, category }) => {
-  let leftData: ActivityData, rightData: ActivityData;
-  let leftTitle: string, rightTitle: string;
-
-  switch (category) {
-    case "F&O":
-      leftData = item.fiiFO;
-      rightData = item.diiFO;
-      leftTitle = "FII";
-      rightTitle = "DII";
-      break;
-    case "FII SEBI":
-      leftData = item.fiiSebiEquity;
-      rightData = item.fiiSebiDebt;
-      leftTitle = "Equity";
-      rightTitle = "Debt";
-      break;
-    case "DII SEBI":
-      leftData = item.diiSebiEquity;
-      rightData = item.diiSebiDebt;
-      leftTitle = "Equity";
-      rightTitle = "Debt";
-      break;
-    default: // Cash
-      leftData = item.fiiCash;
-      rightData = item.diiCash;
-      leftTitle = "FII";
-      rightTitle = "DII";
-  }
-
-  const Col = ({ title, data }: { title: string; data: ActivityData }) => (
-    <div className="flex-1">
-      <p className="text-sm font-semibold text-gray-800 mb-1">{title}</p>
-      <p className={cn("text-xs", data.net >= 0 ? "text-green-600" : "text-red-600")}>
-        Net: <AnimatedNumber value={data.net} /> Cr
-      </p>
-    </div>
-  );
-
-  return (
-    <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-      <p className="text-sm font-semibold text-primary mb-2">
-        {item.dateLabel}
-      </p>
-      <div className="flex divide-x divide-gray-200">
-        <div className="pr-4 w-1/2">
-          <Col title={leftTitle} data={leftData} />
-        </div>
-        <div className="pl-4 w-1/2">
-          <Col title={rightTitle} data={rightData} />
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const FilterButton: React.FC<{
   label: string;
-  onClick: () => void;
+
   isActive: boolean;
-}> = ({ label, onClick, isActive }) => (
+}> = ({ label, isActive }) => (
   <Button
     variant="ghost"
-    onClick={onClick}
     className={cn(
       "flex-1 text-xs sm:text-sm font-medium h-9",
       isActive
@@ -147,6 +91,65 @@ const FilterButton: React.FC<{
   </Button>
 );
 
+// --- NEW: Bar Chart Component ---
+const DataFormatter = (number: number) => {
+  if (Math.abs(number) > 1000) {
+    return (number / 1000).toString() + "k";
+  }
+  return number.toString();
+};
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-3 border rounded-md shadow-lg">
+        <p className="font-semibold text-sm text-gray-800">{label}</p>
+        <p className="text-xs text-green-600">
+          DII Net: {payload[0].value.toLocaleString("en-IN")} Cr
+        </p>
+        <p className="text-xs text-blue-600">
+          FII Net: {payload[1].value.toLocaleString("en-IN")} Cr
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
+const HistoricalBarChart: React.FC<{ data: HistoricalActivity[] }> = ({
+  data,
+}) => {
+  const chartData = data
+    .map((item) => ({
+      date: item.dateLabel.split(",")[0], // "Oct 29, 2025" -> "Oct 29"
+      diiNet: parseFloat(item.diiCash.net.toFixed(2)),
+      fiiNet: parseFloat(item.fiiCash.net.toFixed(2)),
+    }))
+    .reverse(); // Show from earliest to latest
+
+  return (
+    <div className="w-full h-64">
+      <ResponsiveContainer width="100%" height="100%">
+        <RechartsBarChart
+          data={chartData}
+          margin={{ top: 5, right: 0, left: -20, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+          <XAxis dataKey="date" fontSize={12} />
+          <YAxis fontSize={12} tickFormatter={DataFormatter} />
+          <Tooltip content={<CustomTooltip />} />
+          <Legend wrapperStyle={{ fontSize: "14px" }} />
+          <Bar dataKey="diiNet" fill="#10b981" name="DII Net" />
+          <Bar dataKey="fiiNet" fill="#3b82f6" name="FII Net" />
+        </RechartsBarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
+
+
+// --- Main Widget Component ---
 interface FiiDiiWidgetProps {
   data: {
     summary: FiiDiiSummary;
@@ -156,18 +159,11 @@ interface FiiDiiWidgetProps {
 }
 
 const FiiDiiWidget: React.FC<FiiDiiWidgetProps> = ({ data }) => {
-  const { summary, daily, monthly } = data;
+  const { summary, daily, } = data;
 
-  const [summaryCat, setSummaryCat] = useState<
-    "Cash" | "F&O" | "FII SEBI" | "DII SEBI"
-  >("Cash");
-  const [histPeriod, setHistPeriod] = useState<"Daily" | "Monthly">("Daily");
-  const [histCat, setHistCat] = useState<
-    "Cash" | "F&O" | "FII SEBI" | "DII SEBI"
-  >("Cash");
+  const [summaryCat, setSummaryCat] = useState<"Cash" | "F&O">("Cash");
 
   const summaryData = summary[summaryCat];
-  const histData = histPeriod === "Daily" ? daily : monthly;
 
   return (
     <Card>
@@ -177,100 +173,29 @@ const FiiDiiWidget: React.FC<FiiDiiWidgetProps> = ({ data }) => {
       <CardContent className="space-y-6">
         {/* Summary Section */}
         <section>
-          <div className="flex space-x-1 sm:space-x-2 bg-gray-100 p-1 rounded-lg mb-4">
-            <FilterButton
-              label="Cash"
-              onClick={() => setSummaryCat("Cash")}
-              isActive={summaryCat === "Cash"}
-            />
-            <FilterButton
-              label="F&O"
-              onClick={() => setSummaryCat("F&O")}
-              isActive={summaryCat === "F&O"}
-            />
-            <FilterButton
-              label="FII SEBI"
-              onClick={() => setSummaryCat("FII SEBI")}
-              isActive={summaryCat === "FII SEBI"}
-            />
-            <FilterButton
-              label="DII SEBI"
-              onClick={() => setSummaryCat("DII SEBI")}
-              isActive={summaryCat === "DII SEBI"}
-            />
-          </div>
-
           <div className="grid grid-cols-1 gap-4">
-            {summaryCat === "Cash" || summaryCat === "F&O" ? (
-              <>
-                <ParticipantCard
-                  title="Foreign Investors (FII)"
-                  data={(summaryData as any).fii}
-                  icon={Globe}
-                  iconColor="text-blue-600"
-                />
-                <ParticipantCard
-                  title="Domestic Investors (DII)"
-                  data={(summaryData as any).dii}
-                  icon={FileText}
-                  iconColor="text-orange-600"
-                />
-              </>
-            ) : (
-              <>
-                <ParticipantCard
-                  title={`${summaryCat} (Equity)`}
-                  data={(summaryData as any).equity}
-                  icon={BarChart}
-                  iconColor="text-purple-600"
-                />
-                <ParticipantCard
-                  title={`${summaryCat} (Debt)`}
-                  data={(summaryData as any).debt}
-                  icon={DollarSign}
-                  iconColor="text-teal-600"
-                />
-              </>
-            )}
+            <ParticipantCard
+              title="Foreign Investors (FII)"
+              data={(summaryData as any).fii}
+              icon={Globe}
+              iconColor="text-blue-600"
+            />
+            <ParticipantCard
+              title="Domestic Investors (DII)"
+              data={(summaryData as any).dii}
+              icon={FileText}
+              iconColor="text-orange-600"
+            />
           </div>
         </section>
 
         {/* Historical Section */}
         <section>
           <div className="flex flex-col sm:flex-row gap-2 bg-gray-100 p-1 rounded-lg mb-4">
-            <div className="flex flex-1 space-x-1">
-              <FilterButton
-                label="Daily"
-                onClick={() => setHistPeriod("Daily")}
-                isActive={histPeriod === "Daily"}
-              />
-              <FilterButton
-                label="Monthly"
-                onClick={() => setHistPeriod("Monthly")}
-                isActive={histPeriod === "Monthly"}
-              />
-            </div>
-            <div className="flex flex-1 space-x-1">
-              <FilterButton
-                label="Cash"
-                onClick={() => setHistCat("Cash")}
-                isActive={histCat === "Cash"}
-              />
-              <FilterButton
-                label="F&O"
-                onClick={() => setHistCat("F&O")}
-                isActive={histCat === "F&O"}
-              />
-            </div>
+            <FilterButton label="Last 5 Days" isActive={true} />
           </div>
-          <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-            {histData.map((item) => (
-              <HistoricalCard
-                key={item.dateLabel}
-                item={item}
-                category={histCat}
-              />
-            ))}
+          <div className="space-y-4">
+            <HistoricalBarChart data={daily} />
           </div>
         </section>
       </CardContent>

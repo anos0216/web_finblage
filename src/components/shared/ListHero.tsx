@@ -1,3 +1,4 @@
+// src/components/shared/ListHero.tsx
 "use client";
 
 import React, { useState, useRef } from 'react';
@@ -107,10 +108,12 @@ const ListHero: React.FC<ListHeroProps> = ({ title, subtitle, showFilters = fals
 
         {/* --- Wrapper for Search + Filters --- */}
         <div className="hero-search-filter-wrapper max-w-4xl mx-auto opacity-0">
-          <div className={`flex flex-col sm:flex-row items-center gap-4 ${showFilters ? 'justify-center' : 'justify-center'}`}>
+          {/* FIX: Changed sm:flex-row to md:flex-row */}
+          <div className={`flex flex-col md:flex-row items-center gap-4 ${showFilters ? 'justify-center' : 'justify-center'}`}>
 
             {/* --- SEARCH BAR --- */}
-            <div className={`relative w-full sm:w-auto ${showFilters ? 'sm:flex-grow' : 'sm:w-3/5 md:w-1/2 lg:max-w-lg'}`}>
+            {/* FIX: Changed sm: classes to md: classes to match parent */}
+            <div className={`relative w-full ${showFilters ? 'md:w-auto md:flex-grow' : 'md:w-3/5 lg:max-w-lg'}`}>
               <label htmlFor="hero-search-input" className="sr-only">
                 Search articles
               </label>

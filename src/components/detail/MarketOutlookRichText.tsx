@@ -69,18 +69,31 @@ const NodeRenderer: React.FC<{ node: Node }> = ({ node }) => {
 
     case "PARAGRAPH":
       return (
-        <p className="mb-6 text-lg leading-relaxed text-text-secondary">
+        <p
+          className="mb-6 text-[16px] leading-relaxed text-text-secondary"
+          style={{ fontFamily: "var(--font-oxygen)" }} // <-- FONT STYLE APPLIED
+        >
           {children}
         </p>
       );
     case "BULLETED_LIST":
       return (
-        <ul className="list-disc list-inside mb-6 pl-4 space-y-2 text-lg text-text-secondary">
+        <ul
+          className="list-disc list-inside mb-6 pl-4 space-y-2 text-lg text-text-secondary"
+          style={{ fontFamily: "var(--font-oxygen)" }} // <-- FONT STYLE APPLIED
+        >
           {children}
         </ul>
       );
     case "LIST_ITEM":
-      return <li className="mb-2">{children}</li>;
+      return (
+        <li
+          className="mb-2"
+          style={{ fontFamily: "var(--font-oxygen)" }} // <-- FONT STYLE APPLIED
+        >
+          {children}
+        </li>
+      );
     case "IMAGE":
       if (!node.imageData?.image.src.id) return null;
       return (
@@ -129,7 +142,6 @@ const NodeList: React.FC<{ nodes: (Node | TextNode)[] }> = ({ nodes }) => {
 
 // --- Filtering Logic ---
 
-// Helper to get text from a heading node
 const extractHeadingText = (node: Node): string => {
   if (node.type !== "HEADING" || !node.nodes) return "";
   return (node.nodes as TextNode[])
@@ -145,7 +157,6 @@ const ALLOWED_HEADINGS = [
   "Technical Outlook",
 ];
 
-// Headings that *stop* the rendering of a section
 const FORBIDDEN_HEADINGS = [
   "Market Snapshots",
   "Institiutional Activity", // Typo from data
@@ -159,22 +170,18 @@ const MarketOutlookRichText: React.FC<{ content: RichTextNode }> = ({
 }) => {
   if (!content || !content.nodes) return null;
 
-  let isSectionAllowed = true; // Allow content before the first specified heading
+  let isSectionAllowed = true;
   const filteredNodes: Node[] = [];
 
   for (const node of content.nodes as Node[]) {
     if (node.type === "HEADING") {
       const headingText = extractHeadingText(node);
 
-      // Check if this heading starts a forbidden section
       if (FORBIDDEN_HEADINGS.includes(headingText)) {
         isSectionAllowed = false;
-      }
-      // Check if this heading starts an allowed section
-      else if (ALLOWED_HEADINGS.includes(headingText)) {
+      } else if (ALLOWED_HEADINGS.includes(headingText)) {
         isSectionAllowed = true;
       }
-      // If the heading is neither, it continues under the previous section's rule
     }
 
     if (isSectionAllowed) {
@@ -182,7 +189,6 @@ const MarketOutlookRichText: React.FC<{ content: RichTextNode }> = ({
     }
   }
 
-  // Render only the filtered nodes
   return <NodeList nodes={filteredNodes} />;
 };
 

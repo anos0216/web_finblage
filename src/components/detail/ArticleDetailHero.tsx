@@ -1,3 +1,4 @@
+// src/components/detail/ArticleDetailHero.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -102,7 +103,8 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
         <div className="container mx-auto px-4 relative z-10">
           <div className="relative md:flex md:items-center min-h-[520px] md:min-h-[420px]">
             {/* --- Text Content (Left) --- */}
-            <div className="md:w-full lg:w-3/5 py-12 md:py-16">
+            {/* FIX: Changed md:w-full to md:w-3/5 */}
+            <div className="md:w-3/5 lg:w-3/5 py-12 md:py-16">
               <div className="max-w-xl">
                 {category && (
                   <span
@@ -217,7 +219,7 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
             <div
               className="
             absolute top-[58%] md:absolute md:right-0 md:top-[112px] md:h-[60%] 
-            w-full md:w-3/5 lg:w-[45%] 
+            w-full md:w-2/5 lg:w-[45%] {/* FIX: Changed md:w-3/5 to md:w-2/5 */}
             h-64 sm:h-80
             md:pl-8
           "

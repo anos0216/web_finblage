@@ -10,10 +10,10 @@ import {
   TrendingStocks,
 } from "@/lib/market-data";
 import { ArticleDetailHero } from "@/components/detail/ArticleDetailHero";
-// ArticleSidebar is no longer imported
 import MarketOutlookRichText from "@/components/detail/MarketOutlookRichText";
 import FiiDiiWidget from "@/components/detail/FiiDiiWidget";
-import MarketIndexCard from "@/components/marketUI/MarketIndexCard";
+// import MarketIndexCard from "@/components/marketUI/MarketIndexCard"; // REMOVED
+import IndicesTicker from "@/components/marketUI/IndicesTicker"; // ADDED
 import TrendingStocksList from "@/components/marketUI/TrendingStocksList";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -34,11 +34,8 @@ const MarketOutlookDetailClient: React.FC<MarketOutlookDetailClientProps> = ({
   fiiDiiData,
   indices,
   trendingStocks,
-  // allItems is no longer used
 }) => {
   const article = item.data;
-  // Use glimpse first, then fall back to glimpses
-  const abstract = article.glimpse ?? article.glimpses;
   const dateValue = article.date || article.coursePrice;
 
   return (
@@ -51,25 +48,24 @@ const MarketOutlookDetailClient: React.FC<MarketOutlookDetailClientProps> = ({
         itemId={item.id}
       />
 
-      <div className="bg-gray-50 pt-18 pb-12 md:pt-40">
+      {/* FIX: Use pt-32 md:pt-40 to match skeleton and clear hero image */}
+      <div className="bg-gray-50 pt-32 pb-12 md:pt-40">
+        {/* --- FIX: Indices Section MOVED and REPLACED --- */}
+        <section className="container mx-auto px-4 mb-12">
+          {/* Updated Title */}
+          <h2 className="text-lg font-bold mb-4 text-primary">
+            Sectoral Performance
+          </h2>
+          {/* Replaced grid with new ticker */}
+          <IndicesTicker indices={indices} />
+        </section>
+
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-            
             {/* --- Main Content (Left) --- */}
             <main className="lg:w-2/3">
               <article className="space-y-8">
-                {/* Abstract/Intro */}
-                {abstract && (
-                  <p
-                    className="text-lg text-gray-700 border-l-4 border-primary pl-4"
-                    style={{
-                      fontFamily: "var(--font-oxygen)",
-                      fontWeight: 400,
-                    }}
-                  >
-                    {abstract}
-                  </p>
-                )}
+                {/* Abstract/Intro has been REMOVED */}
 
                 {/* Main Content Body (Market Wrap, What's Ahead, etc.) */}
                 <div className="prose prose-lg max-w-none text-gray-800">
@@ -107,19 +103,7 @@ const MarketOutlookDetailClient: React.FC<MarketOutlookDetailClientProps> = ({
               {/* FII/DII Widget */}
               <FiiDiiWidget data={fiiDiiData} />
 
-              {/* Indices */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Indices</CardTitle>
-                </CardHeader>
-                <CardContent className="grid grid-cols-2 gap-4">
-                  {indices.map((item) => (
-                    <MarketIndexCard key={item.id} item={item} />
-                  ))}
-                </CardContent>
-              </Card>
-
-              {/* "More Outlooks" (ArticleSidebar) has been removed as requested */}
+              {/* "More Outlooks" (ArticleSidebar) has been removed */}
             </aside>
           </div>
         </div>
