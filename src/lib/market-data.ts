@@ -62,6 +62,20 @@ export const getIndicesData = async (): Promise<StockData[]> => {
       change: "-25.50 (0.31%)",
       isPositive: false,
     },
+        {
+      id: "itnifty",
+      name: "NIFTY IT",
+      value: "8,200.00",
+      change: "2.50 (0.31%)",
+      isPositive: true,
+    },
+        {
+      id: "autonifty",
+      name: "NIFTY AUTO",
+      value: "8,200.00",
+      change: "-35.50 (0.31%)",
+      isPositive: false,
+    },
   ];
 };
 

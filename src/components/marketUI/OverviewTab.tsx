@@ -1,7 +1,8 @@
-// src/components/market/OverviewTab.tsx
+// src/components/marketUI/OverviewTab.tsx
 import React from 'react';
 import { StockData, TrendingStocks } from '@/lib/market-data';
-import MarketIndexCard from './MarketIndexCard';
+import MarketIndexCard from './MarketIndexCard'; // RE-ADDED
+// import IndicesTicker from './IndicesTicker'; // REMOVED
 import TrendingStocksList from './TrendingStocksList';
 
 interface OverviewTabProps {
@@ -12,7 +13,7 @@ interface OverviewTabProps {
 const OverviewTab: React.FC<OverviewTabProps> = ({ indices, trendingStocks }) => {
   return (
     <div className="space-y-8">
-      {/* Indices Section */}
+      {/* Indices Section - Reverted to Card Grid */}
       <section>
         <h2 className="text-xl font-semibold text-primary mb-4" style={{ fontFamily: 'var(--font-playfair)' }}>
           Indices
