@@ -48,6 +48,7 @@ export interface ArticleItem {
     subtitle?: string; 
     glimpse?: string;  // For Outlook, Spotlight
     glimpses?: string; // For Insights, Merger (as per user)
+    metaDescription?: string; // <-- ADDED THIS for Merger/Acquisition cards
     image: string;
     category?: string;
     date?: string; // Standard date field

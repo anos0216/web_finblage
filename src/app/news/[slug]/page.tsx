@@ -124,7 +124,7 @@ export default function NewsDetailPage() {
   return (
     <>
       {/* --- Hero Section --- */}
-      <div className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] py-16 text-white overflow-hidden">
+      <div className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] pt-28 pb-16 text-white overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 z-0 opacity-[0.07]">
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">

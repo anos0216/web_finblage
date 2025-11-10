@@ -67,10 +67,12 @@ const AnimatedArticleCard: React.FC<CardProps> = ({ item, basePath }) => {
     ? (item as NewsItem).data.richtext
     : (item as ArticleItem).data.title;
     
-  // FIX: Check for glimpse first, then fall back to glimpses
+  // FIX: Check for glimpse, then glimpses, then metaDescription
   const description = isNews
     ? (item as NewsItem).data.abstract
-    : (item as ArticleItem).data.glimpse ?? (item as ArticleItem).data.glimpses;
+    : (item as ArticleItem).data.glimpse ??
+      (item as ArticleItem).data.glimpses ??
+      (item as ArticleItem).data.metaDescription; // <-- ADDED FALLBACK
     
   const image =
     "image" in item.data ? (item as ArticleItem).data.image : undefined;

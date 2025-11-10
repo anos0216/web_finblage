@@ -64,11 +64,7 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
       <div className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] text-white">
         {/* ... (Background Pattern) ... */}
         <div className="absolute inset-0 z-0 opacity-[0.07]">
-          <svg
-            width="100%"
-            height="100%"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <pattern
                 id="pattern-lines-dark"
@@ -103,8 +99,8 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
         <div className="container mx-auto px-4 relative z-10">
           <div className="relative md:flex md:items-center min-h-[520px] md:min-h-[420px]">
             {/* --- Text Content (Left) --- */}
-            {/* FIX: Changed md:w-full to md:w-3/5 */}
-            <div className="md:w-3/5 lg:w-3/5 py-12 md:py-16">
+            {/* FIX: Changed padding to account for h-18 navbar */}
+            <div className="md:w-3/5 lg:w-3/5 pt-28 pb-12 md:pt-32 md:pb-16">
               <div className="max-w-xl">
                 {category && (
                   <span
@@ -141,7 +137,7 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
                   >
                     <Share2 size={18} />
                   </button>
-                  
+
                   {/* --- AI CHATBOT TRIGGER --- */}
                   <button
                     aria-label="AI Summary"
@@ -216,24 +212,23 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
             </div>
 
             {/* --- Image (Floating Right) --- */}
+            {/* FIX: Adjusted top position to align with new padding */}
             <div
               className="
-            absolute top-[58%] md:absolute md:right-0 md:top-[112px] md:h-[60%] 
-            w-full md:w-2/5 lg:w-[45%] {/* FIX: Changed md:w-3/5 to md:w-2/5 */}
+            absolute top-[58%] md:absolute md:right-0 md:top-[128px] md:h-[60%] 
+            w-full md:w-2/5 lg:w-[45%]
             h-64 sm:h-80
             md:pl-8
           "
             >
               <div
                 className="
-                relative w-full h-full
+                relative w-full h-full md:border-5 border-3  border-white
                 md:h-[calc(100%+8rem)] md:min-h-[300px] 
-                rounded-[12px] overflow-hidden shadow-2xl
+                rounded-[12px] overflow-hidden
                 -mb-24 md:mb-0 md:top-0
                 "
-                style={{
-                  clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
-                }}
+                // <-- FIX: Removed the style attribute with clipPath
               >
                 {imageUrl ? (
                   <Image

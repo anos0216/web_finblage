@@ -86,7 +86,7 @@ const ListHero: React.FC<ListHeroProps> = ({ title, subtitle, showFilters = fals
   return (
     <div
       ref={containerRef}
-      className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] py-16 md:py-20 text-white overflow-hidden"
+className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] pt-28 pb-16 md:pt-32 md:pb-20 text-white overflow-hidden"
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 z-0 opacity-[0.07]">

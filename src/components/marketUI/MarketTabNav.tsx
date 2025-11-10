@@ -18,7 +18,7 @@ const MarketTabNav = () => {
   const pathname = usePathname();
 
   return (
-    <nav className="sticky top-0 z-30 bg-white shadow-sm border-b border-gray-200">
+    <nav className="sticky top-18 z-30 bg-white shadow-sm border-b border-gray-200"> {/* <-- UPDATED top-0 to top-18 */}
       <div className="container mx-auto px-4">
         <div className="flex items-center space-x-1 overflow-x-auto -mb-px">
           {tabs.map((tab) => {
