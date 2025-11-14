@@ -6,6 +6,7 @@ export const groupedMenus: MenuItem[] = [
         name: "News",
         path: '/news',
     },
+
     {
         name: "Insights",
         subMenus: [
@@ -31,6 +32,7 @@ export const groupedMenus: MenuItem[] = [
             { name: "Career", path: '/career' },
         ],
     },
+    
 ];
 
 // The account menu is typed as a single link item

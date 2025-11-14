@@ -1,23 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; // Removed useRef
 import { useParams, notFound } from "next/navigation";
-import { useData } from "@/context/DataContext"; //
+import { useData } from "@/context/DataContext";
 import {
-  Calendar,
-  Clock,
-  Share2,
-  Sparkles,
-  FileText,
-  Bookmark,
-  Minimize2, // Added
-  Maximize2, // Added
+  Minimize2, // Cleaned up imports
+  Maximize2,
 } from "lucide-react";
-import { NewsItem } from "@/types/finblage"; //
-import { ArticleMainContent } from "@/components/detail/ArticleMainContent"; //
-import { ArticleSidebar } from "@/components/detail/ArticleSidebar"; //
-
-// --- Import Dialog and Editor ---
+import { NewsItem } from "@/types/finblage";
+import { ArticleMainContent } from "@/components/detail/ArticleMainContent";
+import { ArticleSidebar } from "@/components/detail/ArticleSidebar";
+import { ArticleDetailHero } from "@/components/detail/ArticleDetailHero"; // <-- IMPORTED
 import {
   Dialog,
   DialogContent,
@@ -27,11 +20,11 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from "@/components/ui/dialog"; //
-import NoteEditor from "@/components/shared/NoteEditor"; //
-import { Button } from "@/components/ui/button"; //
+} from "@/components/ui/dialog";
+import NoteEditor from "@/components/shared/NoteEditor";
+import { Button } from "@/components/ui/button";
 
-// --- Loading Skeleton Component ---
+// --- Loading Skeleton Component (Unchanged) ---
 const NewsDetailSkeleton = () => {
   return (
     <div className="animate-pulse">
@@ -82,7 +75,9 @@ export default function NewsDetailPage() {
   const slug = params.slug as string;
 
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
-  const [isNoteMinimized, setIsNoteMinimized] = useState(false); // Added
+  const [isNoteMinimized, setIsNoteMinimized] = useState(false);
+  // --- DELETED isSticky state and useEffect ---
+
   const {
     getItemBySlug,
     news,
@@ -90,12 +85,12 @@ export default function NewsDetailPage() {
     fetchInitialData,
     getNote,
     updateNote,
-    openChatbot, // <-- ADDED openChatbot
-  } = useData(); //
+    // openChatbot is now called from within ArticleDetailHero
+  } = useData();
 
   useEffect(() => {
     if (news.length === 0) {
-      fetchInitialData(); //
+      fetchInitialData();
     }
   }, [news.length, fetchInitialData]);
 
@@ -103,200 +98,99 @@ export default function NewsDetailPage() {
     return <NewsDetailSkeleton />;
   }
 
-  const newsItem = getItemBySlug(slug, "news") as NewsItem | undefined; //
+  const newsItem = getItemBySlug(slug, "news") as NewsItem | undefined;
 
   if (!newsItem) {
     notFound();
   }
 
   const article = newsItem.data;
-  const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-
   const otherNews = news.filter((item) => item.id !== newsItem.id).slice(0, 5);
+  const currentNote = getNote(newsItem.id) || "";
 
-  const currentNote = getNote(newsItem.id) || ""; //
+  // --- DELETED ActionIcons component definition ---
 
   return (
     <>
-      {/* --- Hero Section --- */}
-      <div className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] pt-28 pb-16 text-white overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 z-0 opacity-[0.07]">
-          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern
-                id="pattern-lines"
-                x="0"
-                y="0"
-                width="10"
-                height="10"
-                patternUnits="userSpaceOnUse"
-                patternTransform="rotate(45)"
-              >
-                <line
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="10"
-                  stroke="white"
-                  strokeWidth="1"
-                />
-              </pattern>
-            </defs>
-            <rect
-              x="0"
-              y="0"
-              width="100%"
-              height="100%"
-              fill="url(#pattern-lines)"
-            ></rect>
-          </svg>
-        </div>
+      {/* --- REPLACED Hero Section --- */}
+      <ArticleDetailHero
+        title={article.richtext}
+        category={article.category}
+        date={article.date}
+        time={article.time.slice(0, 5)} // Pass formatted time
+        itemId={newsItem.id}
+        // No imageUrl is passed, so it will use the full-width layout
+      />
 
-        {/* Hero Content */}
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl">
-            {/* Category */}
-            <span
-              className="inline-block mt-5 bg-white/10 backdrop-blur-sm text-white text-xs font-semibold mb-2 px-3 py-1 rounded"
-              style={{ fontFamily: "var(--font-inter)", fontWeight: 500 }}
-            >
-              {article.category}
-            </span>
-            {/* Title */}
-            <h1
-              className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight"
-              style={{ fontFamily: "var(--font-oxygen)", fontWeight: 700 }}
-            >
-              {article.richtext}
-            </h1>
-            {/* Meta & Actions */}
-            <div className="flex flex-col items-start gap-4">
-              <div className="flex items-center text-gray-300 text-sm mt-2">
-                <div className="flex items-center mr-4">
-                  <Calendar className="w-4 h-4 mr-2 opacity-80" />
-                  <span>{formatDate(article.date)}</span>
-                </div>
-                <div className="flex items-center">
-                  <Clock className="w-4 h-4 mr-2 opacity-80" />
-                  <span>{article.time.slice(0, 5)}</span>
-                </div>
-              </div>
-              {/* Action Icons */}
-              <div className="flex items-center space-x-3">
-                <button
-                  aria-label="Share"
-                  className="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-300 hover:text-white"
-                >
-                  {" "}
-                  <Share2 size={18} />{" "}
-                </button>
-                
-                {/* --- AI CHATBOT TRIGGER --- */}
-                <button
-                  aria-label="AI Summary"
-                  className="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-300 hover:text-white"
-                  onClick={openChatbot} // <-- CONNECTED
-                >
-                  {" "}
-                  <Sparkles size={18} />{" "}
-                </button>
+      {/* --- DELETED Sticky Header --- */}
 
-                {/* --- MODAL IMPLEMENTATION --- */}
-                <Dialog
-                  open={isNoteModalOpen}
-                  onOpenChange={(open) => {
-                    if (!open) setIsNoteMinimized(false);
-                    setIsNoteModalOpen(open);
-                  }}
-                >
-                  <DialogTrigger asChild>
-                    <button
-                      aria-label="Create Note"
-                      className="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-300 hover:text-white"
-                    >
-                      {" "}
-                      <FileText size={18} />{" "}
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[700px] max-h-[90vh] flex flex-col">
-                    <DialogHeader>
-                      <DialogTitle>Create Note</DialogTitle>
-                      <DialogDescription>
-                        Add your personal notes for: "{article.richtext}"
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="flex-grow overflow-y-auto pt-2 -mx-6 px-6">
-                      <NoteEditor
-                        content={currentNote}
-                        onUpdate={(htmlContent) => {
-                          updateNote(newsItem.id, htmlContent); /* */
-                        }}
-                      />
-                    </div>
-                    {/* --- FOOTER WITH MINIMIZE AND DONE BUTTON --- */}
-                    <DialogFooter className="pt-4 border-t mt-2 sm:justify-between">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={() => {
-                          setIsNoteModalOpen(false);
-                          setIsNoteMinimized(true);
-                        }}
-                      >
-                        <Minimize2 className="w-4 h-4 mr-2" />
-                        Minimize
-                      </Button>
-                      <DialogClose asChild>
-                        <Button type="button" variant="default">
-                          Done
-                        </Button>
-                      </DialogClose>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-                {/* --- END MODAL --- */}
-
-                <button
-                  aria-label="Bookmark"
-                  className="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-300 hover:text-white"
-                >
-                  {" "}
-                  <Bookmark size={18} />{" "}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* --- Main Content Area --- */}
+      {/* --- Main Content Area (Unchanged) --- */}
       <div className="bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-            <ArticleMainContent item={newsItem} /> {/* */}
+            <ArticleMainContent item={newsItem} />
             <ArticleSidebar
               currentItemId={article._id ?? ""}
               allItemsForTrending={news}
               title="More News"
               items={otherNews}
               basePath="/news"
-            />{" "}
-            {/* */}
+            />
           </div>
         </div>
       </div>
+      
+      {/* --- MODAL (MOVED logic inside ArticleDetailHero) --- */}
+      {/* We only need the dialog content for the *minimized* state */}
+      <Dialog
+        open={isNoteModalOpen}
+        onOpenChange={(open) => {
+          if (!open) setIsNoteMinimized(false);
+          setIsNoteModalOpen(open);
+        }}
+      >
+        <DialogContent className="sm:max-w-[700px] max-h-[90vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Create Note</DialogTitle>
+            <DialogDescription>
+              Add your personal notes for: "{article.richtext}"
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-grow overflow-y-auto pt-2 -mx-6 px-6">
+            <NoteEditor
+              content={currentNote}
+              onUpdate={(htmlContent) => {
+                updateNote(newsItem.id, htmlContent);
+              }}
+            />
+          </div>
+          <DialogFooter className="pt-4 border-t mt-2 sm:justify-between">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                setIsNoteModalOpen(false);
+                setIsNoteMinimized(true);
+              }}
+            >
+              <Minimize2 className="w-4 h-4 mr-2" />
+              Minimize
+            </Button>
+            <DialogClose asChild>
+              <Button type="button" variant="default">
+                Done
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      {/* --- Minimized Note Widget --- */}
+
+      {/* --- Minimized Note Widget (Unchanged) --- */}
       {isNoteMinimized && (
         <Button
           aria-label="Expand Note"
-          className="fixed bottom-6 left-6 z-[60] rounded-full shadow-lg h-14 w-14 p-0" // z-index higher than modal overlay (50)
+          className="fixed bottom-6 left-6 z-[60] rounded-full shadow-lg h-14 w-14 p-0"
           onClick={() => {
             setIsNoteMinimized(false);
             setIsNoteModalOpen(true);

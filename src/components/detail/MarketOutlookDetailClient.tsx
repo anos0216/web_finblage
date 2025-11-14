@@ -59,14 +59,13 @@ const MarketOutlookDetailClient: React.FC<MarketOutlookDetailClientProps> = ({
             
             {/* --- Main Content (Left) --- */}
             <main className="lg:w-2/3">
-              {/* --- Sectoral Indices --- */}
+              {/* --- SWAPPED: Major Indices --- */}
               <section className="mb-8">
                 <h2 className="text-lg font-bold mb-4 text-primary">
-                  Sectoral Indices
+                  Major Indices
                 </h2>
-                {/* FIX: Made grid responsive. 2 cols on mobile, 3 on tablet+ */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                  {sectoralIndices.map((item) => (
+                  {majorIndices.map((item) => (
                     <MarketIndexCard key={item.id} item={item} />
                   ))}
                 </div>
@@ -78,7 +77,6 @@ const MarketOutlookDetailClient: React.FC<MarketOutlookDetailClientProps> = ({
                   <MarketOutlookRichText content={article.body} />
                 </div>
 
-                {/* FIX: Made grid responsive. 1 col on mobile, 2 on tablet+ */}
                 <div className="pt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                   <TrendingStocksList
                     title="Top Gainers"
@@ -106,15 +104,14 @@ const MarketOutlookDetailClient: React.FC<MarketOutlookDetailClientProps> = ({
             </main>
 
             {/* --- Sidebar (Right) --- */}
-            <aside className="lg:w-1/3 lg:sticky lg:top-2 lg:self-start space-y-6">
-              {/* --- Major Indices --- */}
+            <aside className="lg:w-1/3 lg:sticky lg:top-10 lg:self-start space-y-6">
+              {/* --- SWAPPED: Sectoral Indices --- */}
               <section>
                 <h2 className="text-lg font-bold mb-4 text-primary">
-                  Major Indices
+                  Sectoral Indices
                 </h2>
-                {/* This 2-col grid is fine, as the sidebar stacks on mobile */}
                 <div className="grid grid-cols-2 gap-4">
-                  {majorIndices.map((item) => (
+                  {sectoralIndices.map((item) => (
                     <MarketIndexCard key={item.id} item={item} />
                   ))}
                 </div>

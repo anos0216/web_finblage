@@ -8,6 +8,7 @@ import { FiMenu, FiX } from "react-icons/fi";
 import { accountMenu, groupedMenus } from "@/data/menus";
 import { usePathname } from "next/navigation"; // <-- IMPORT
 import { cn } from "@/lib/utils"; // <-- IMPORT
+import Image from "next/image";
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
@@ -45,7 +46,7 @@ const Navbar: React.FC = () => {
 
   // Conditionally set classes
   const navClasses = cn(
-    "flex z-40 w-full items-center justify-between lg:px-8 sm:px-5 py-4 px-3 transition-all duration-300 h-18", // <-- FIXED HEIGHT h-18 (72px)
+    "flex z-40 w-full items-center justify-between lg:px-8 sm:px-5 px-3 transition-all duration-300 h-18", // <-- FIX: Changed py-4 to py-2
     {
       "absolute top-0 left-0 text-white border-b border-white/20 bg-transparent":
         isOverlayRoute,
@@ -90,9 +91,20 @@ const Navbar: React.FC = () => {
     <nav
       className={navClasses} // <-- Use the conditional classes
     >
-      <div className="text-2xl z-20 font-bold">
-        <a href="/">Finblage</a>
-      </div>
+      
+          <div className="text-2xl relative z-20 font-bold w-full flex items-center">
+            {/* --- FIX: Changed height, width, and objectFit --- */}
+            <Image
+              src={"/images/logo.png"}
+              alt="Logo"
+              height={90}
+              width={140}
+              className="absolute -left-10"
+            />
+            <a href="/" className="absolute left-[64px]">
+              Finblage
+            </a>
+          </div>
 
       {/* Desktop Menu */}
       <div className="hidden md:flex items-center gap-x-8">
@@ -152,7 +164,7 @@ const Navbar: React.FC = () => {
         <a
           href={accountMenu.path}
           className={cn(
-            "hidden md:block transition-colors duration-300",
+            "hidden md:block transition-colors ml-8 duration-300",
             linkColor // <-- Use conditional color
           )}
         >
@@ -161,7 +173,7 @@ const Navbar: React.FC = () => {
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className={cn(
-            "lg:hidden text-2xl z-50 transition-colors duration-300",
+            "md:hidden text-2xl z-50 transition-colors duration-300",
             mobileIconColor // <-- Use conditional color
           )}
           aria-label="Toggle mobile menu"

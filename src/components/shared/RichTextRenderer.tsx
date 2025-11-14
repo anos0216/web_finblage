@@ -49,10 +49,11 @@ const NodeRenderer: React.FC<{ node: Node }> = ({ node }) => {
       
     case 'PARAGRAPH':
       return <p className="mb-6 text-lg leading-relaxed text-text-secondary">{children}</p>;
-    case 'BULLETED_LIST':
-      return <ul className="list-disc list-inside mb-6 pl-4 space-y-2 text-lg text-text-secondary">{children}</ul>;
     
-    // FIX: Added a specific case for 'LIST_ITEM' to correctly render <li> tags.
+    // FIX: Changed list-inside to list-outside and adjusted padding (pl-4 to pl-6)
+    case 'BULLETED_LIST':
+      return <ul className="list-disc list-outside mb-6 pl-6 space-y-2 text-lg text-text-secondary">{children}</ul>;
+    
     case 'LIST_ITEM':
         return <li className="mb-2">{children}</li>;
 
@@ -69,8 +70,6 @@ const NodeRenderer: React.FC<{ node: Node }> = ({ node }) => {
     case 'HTML':
         return <div className="my-6" dangerouslySetInnerHTML={{ __html: node.htmlData?.html || '' }} />;
     
-    // FIX: Changed the default case to a React.Fragment. This prevents unknown node
-    // types from incorrectly rendering as <li> tags and causing nesting errors.
     default:
       return <>{children}</>;
   }

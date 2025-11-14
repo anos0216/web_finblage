@@ -35,7 +35,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ menus, account, onClose }) => {
     };
 
     return (
-        <div ref={containerRef} className='fixed inset-0 z-40 lg:hidden'>
+        <div ref={containerRef} className='fixed inset-0 z-40 md:hidden'>
             {/* Overlay */}
             <div className='mobile-overlay fixed inset-0 bg-black bg-opacity-50' onClick={handleClose} />
             
