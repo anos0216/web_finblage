@@ -51,7 +51,7 @@ export default function ArticleDetailPage() {
         itemId={articleItem.id} // <-- FIX: Changed from article.title to articleItem.id
       />
 
-      <div className="bg-gray-50 pt-18 pb-12 md:pt-40">
+      <div className="bg-gray-50 pt-[214px] pb-12 md:pt-40">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
             <ArticleMainContent item={articleItem} />

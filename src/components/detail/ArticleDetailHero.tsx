@@ -346,7 +346,7 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
             {imageUrl && (
               <div
                 className="
-                  absolute top-[58%] md:absolute md:right-0 md:top-[128px] md:h-[60%] 
+                  absolute top-[86%] md:absolute md:right-0 md:top-[128px] md:h-[60%] 
                   w-full md:w-2/5 lg:w-[45%]
                   h-64 sm:h-80
                   md:pl-8
