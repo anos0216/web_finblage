@@ -31,6 +31,12 @@ images: {
         port: '',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'logo.clearbit.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };

@@ -486,7 +486,7 @@ const IpoDetailClient: React.FC<{
                 <div className="flex justify-between">
                   <p className="text-sm text-gray-500">Face Value</p>
                   <p className="text-sm font-semibold text-gray-800">
-                    ₹{ipo.capitalStructure.faceValue}
+                    {ipo.capitalStructure.faceValue}
                   </p>
                 </div>
               </CardContent>
@@ -515,7 +515,7 @@ const IpoDetailClient: React.FC<{
                 <div className="flex justify-between">
                   <p className="text-sm text-gray-500">Market Cap (Cr)</p>
                   <p className="text-sm font-semibold text-gray-800">
-                    ₹{ipo.valuationMetrics.marketCap}
+                    {ipo.valuationMetrics.marketCap}
                   </p>
                 </div>
               </CardContent>
