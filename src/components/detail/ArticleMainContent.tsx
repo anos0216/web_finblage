@@ -1,6 +1,6 @@
 import React from "react";
-import { NewsItem, ArticleItem } from "@/types/finblage"; //
-import RichTextRenderer from "@/components/shared/RichTextRenderer"; //
+import { NewsItem, ArticleItem } from "@/types/finblage"; 
+import RichTextRenderer from "@/components/shared/RichTextRenderer"; 
 
 interface ArticleMainContentProps {
   item: NewsItem | ArticleItem;
@@ -12,9 +12,11 @@ export const ArticleMainContent: React.FC<ArticleMainContentProps> = ({
   const isNews = "richtext" in item.data;
   const data = item.data as any;
 
-  // FIX: Check for glimpse first, then fall back to glimpses
+  // Check for glimpse, then glimpses
   const abstract = isNews ? data.abstract : data.glimpse ?? data.glimpses;
-  const body = isNews ? data.subHeadline : data.body;
+  
+  // FIX: Added fallback to 'listBody' which matches the Merger Acquisition API structure
+  const body = isNews ? data.subHeadline : (data.body || data.listBody);
 
   return (
     <main className="lg:w-2/3">
@@ -51,7 +53,7 @@ export const ArticleMainContent: React.FC<ArticleMainContentProps> = ({
               )
           ) : (
             // Render rich text for other Articles
-            <RichTextRenderer content={body} /> //
+            <RichTextRenderer content={body} /> 
           )}
         </div>
       </article>

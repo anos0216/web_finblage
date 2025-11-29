@@ -1,4 +1,3 @@
-// src/components/detail/ArticleDetailHero.tsx
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
@@ -6,7 +5,7 @@ import Image from "next/image";
 import { formatWixImage } from "@/lib/utils";
 import {
   Calendar,
-  Clock, // <-- ADDED
+  Clock,
   Share2,
   Sparkles,
   FileText,
@@ -37,18 +36,25 @@ interface ArticleDetailHeroProps {
   title: string;
   category?: string;
   date: string;
-  time?: string; // <-- ADDED
+  time?: string;
   imageUrl?: string;
   itemId: string;
+  // --- New Custom Props for M&A ---
+  dealType?: string;
+  dealStatus?: string;
+  estimatedValue?: string;
 }
 
 export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
   title,
   category,
   date,
-  time, // <-- ADDED
+  time,
   imageUrl,
   itemId,
+  dealType,
+  dealStatus,
+  estimatedValue,
 }) => {
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString("en-IN", {
@@ -57,20 +63,15 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
       year: "numeric",
     });
 
-  // --- State for Modal (Note) ---
-  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
-  const [isNoteMinimized, setIsNoteMinimized] = useState(false);
-
-  // --- Get Note functions from Context ---
   const { getNote, updateNote, openChatbot } = useData();
   const currentNote = getNote(itemId) || "";
 
-  // --- STICKY HEADER STATE & EFFECT ---
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+  const [isNoteMinimized, setIsNoteMinimized] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
 
   useEffect(() => {
-    // FIX: Changed threshold to be consistent
-    const threshold = 450; 
+    const threshold = 450;
     const handleScroll = () => {
       setIsSticky(window.scrollY > threshold);
     };
@@ -78,20 +79,19 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []); // Empty dependency array, runs once on mount
+  }, []);
 
-  // --- Re-usable Action Icons Component (Unchanged) ---
   const ActionIcons = ({ articleTitle }: { articleTitle: string }) => {
     const [isShareOpen, setIsShareOpen] = useState(false);
     const [currentUrl, setCurrentUrl] = useState("");
     const shareContainerRef = useRef<HTMLDivElement>(null);
 
-    // Get current URL on mount
     useEffect(() => {
-      setCurrentUrl(encodeURIComponent(window.location.href));
+      if (typeof window !== 'undefined') {
+        setCurrentUrl(encodeURIComponent(window.location.href));
+      }
     }, []);
 
-    // Handle click outside to close share menu
     useEffect(() => {
       function handleClickOutside(event: MouseEvent) {
         if (
@@ -139,10 +139,7 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
     ];
 
     return (
-      <div
-        ref={shareContainerRef}
-        className="relative flex items-center space-x-3"
-      >
+      <div ref={shareContainerRef} className="relative flex items-center space-x-3">
         <button
           aria-label="AI Summary"
           className="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-300 hover:text-white"
@@ -208,7 +205,7 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
         >
           <Bookmark size={18} />
         </button>
-        {/* --- SHARE POPOVER --- */}
+
         <div
           className={cn(
             "absolute top-10 -left-[1px] flex items-center gap-2 rounded-full bg-white/10 p-2 shadow-lg transition-all duration-300 ease-in-out",
@@ -233,12 +230,11 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
             </a>
           ))}
         </div>
-        {/* --- END SHARE POPOVER --- */}
 
         <button
           aria-label="Share"
           className="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-300 hover:text-white"
-          onClick={() => setIsShareOpen(!isShareOpen)} // Toggle share menu
+          onClick={() => setIsShareOpen(!isShareOpen)}
         >
           <Share2 size={18} />
         </button>
@@ -248,9 +244,7 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
 
   return (
     <>
-      {/* --- MAIN HERO SECTION --- */}
       <div className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] text-white">
-        {/* ... (Background Pattern) ... */}
         <div className="absolute inset-0 z-0 opacity-[0.07]">
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -263,65 +257,76 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
                 patternUnits="userSpaceOnUse"
                 patternTransform="rotate(45)"
               >
-                <line
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="10"
-                  stroke="white"
-                  strokeWidth="1"
-                />
+                <line x1="0" y1="0" x2="0" y2="10" stroke="white" strokeWidth="1" />
               </pattern>
             </defs>
-            <rect
-              x="0"
-              y="0"
-              width="100%"
-              height="100%"
-              fill="url(#pattern-lines-dark)"
-            ></rect>
+            <rect x="0" y="0" width="100%" height="100%" fill="url(#pattern-lines-dark)"></rect>
           </svg>
         </div>
 
-        {/* Content Container */}
         <div className="container mx-auto px-4 relative z-10">
-          {/* FIX: Conditional layout wrapper */}
           <div
             className={cn(
-              "relative min-h-[420px]", // Base height
-              imageUrl && "md:flex md:items-center" // Apply flex only if image exists
+              "relative min-h-[420px]",
+              imageUrl && "md:flex md:items-center"
             )}
           >
-            {/* --- Text Content (Left) --- */}
-            {/* FIX: Conditional width */}
             <div
               className={cn(
                 "pt-28 pb-12 md:pt-32 md:pb-16",
-                imageUrl ? "md:w-3/5 lg:w-3/5" : "max-w-4xl" // Full width if no image
+                imageUrl ? "md:w-3/5 lg:w-3/5" : "max-w-4xl"
               )}
             >
               <div className={cn(imageUrl ? "max-w-xl" : "")}>
-                {category && (
+                {category && !dealType && (
                   <span
                     className="inline-block bg-white/10 backdrop-blur-sm text-white text-xs font-semibold mb-4 px-3 py-1 rounded"
-                    style={{
-                      fontFamily: "var(--font-inter)",
-                      fontWeight: 500,
-                    }}
+                    style={{ fontFamily: "var(--font-inter)", fontWeight: 500 }}
                   >
                     {category}
                   </span>
                 )}
+                
                 <h1
                   className="text-3xl md:text-4xl font-bold mb-4 leading-tight"
-                  style={{
-                    fontFamily: "var(--font-oxygen)",
-                    fontWeight: 700,
-                  }}
+                  style={{ fontFamily: "var(--font-oxygen)", fontWeight: 700 }}
                 >
                   {title}
                 </h1>
-                {/* FIX: Added flex wrapper and conditional time */}
+
+                {/* --- CUSTOM DETAILS SECTION (Below Title) --- */}
+                {(dealType || dealStatus || estimatedValue) && (
+                  <div className="flex flex-wrap items-center gap-3 mt-2 mb-6 text-sm">
+                    {dealType && (
+                      <span className="bg-white/10 backdrop-blur-md px-3 py-1 rounded-md font-medium text-gray-100 border border-white/20">
+                        {dealType}
+                      </span>
+                    )}
+                    {dealStatus && (
+                      <span
+                        className={cn(
+                          "px-3 py-1 rounded-md font-medium border backdrop-blur-sm",
+                          dealStatus === "Completed"
+                            ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-100"
+                            : dealStatus === "Pending"
+                            ? "bg-amber-500/20 border-amber-500/30 text-amber-100"
+                            : "bg-blue-500/20 border-blue-500/30 text-blue-100"
+                        )}
+                      >
+                        {dealStatus}
+                      </span>
+                    )}
+                    {estimatedValue && (
+                      <div className="flex items-center px-3 py-1">
+                        <span className="text-gray-300 mr-2">Value:</span>
+                        <span className="font-bold text-accent text-lg">
+                          {estimatedValue}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <div className="flex flex-col md:flex-row items-start md:items-center text-gray-300 text-sm mt-4">
                   <div className="flex items-center">
                     <Calendar className="w-4 h-4 mr-2 opacity-80" />
@@ -334,15 +339,13 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
                     </div>
                   )}
                 </div>
-                {/* --- Action Icons (Original Position) --- */}
+
                 <div className="mt-6">
                   <ActionIcons articleTitle={title} />
                 </div>
               </div>
             </div>
-            
-            {/* --- Image (Floating Right) --- */}
-            {/* FIX: Conditional rendering for image */}
+
             {imageUrl && (
               <div
                 className="
@@ -375,7 +378,6 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
         </div>
       </div>
 
-      {/* --- NEW: STICKY HEADER (Unchanged) --- */}
       <div
         className={cn(
           "fixed w-full md:px-8 px-1 top-0 left-0 right-0 z-40 h-18 bg-gradient-to-br from-primary to-[#000b2c] text-white shadow-lg transition-all duration-300 ease-in-out",
@@ -385,7 +387,6 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
         )}
       >
         <div className="h-full flex items-center justify-between">
-          {/* Sticky Category */}
           <div className="text-2xl relative z-20 font-bold w-full flex items-center">
             <Image
               src={"/images/logo.png"}
@@ -398,16 +399,12 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
               Finblage
             </a>
           </div>
-
-          {/* Sticky Action Icons */}
           <div className="flex-shrink-0">
             <ActionIcons articleTitle={title} />
           </div>
         </div>
       </div>
-      {/* --- END: STICKY HEADER --- */}
 
-      {/* --- Minimized Note Widget (Unchanged) --- */}
       {isNoteMinimized && (
         <Button
           aria-label="Expand Note"

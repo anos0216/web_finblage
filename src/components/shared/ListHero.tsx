@@ -1,4 +1,3 @@
-// src/components/shared/ListHero.tsx
 "use client";
 
 import React, { useState, useRef } from 'react';
@@ -28,21 +27,29 @@ const categoriesData: Category[] = [
   { name: "Geopolitical", subCategories: ["All", "Indian", "Global"] },
   { name: "Sector", subCategories: ["All", "Type A", "Type B"] },
 ];
-// -------------------
 
 interface ListHeroProps {
   title: string;
   subtitle: string;
   showFilters?: boolean;
+  onSearch?: (term: string) => void;
+  searchPlaceholder?: string;
+  children?: React.ReactNode;
 }
 
-const ListHero: React.FC<ListHeroProps> = ({ title, subtitle, showFilters = false }) => {
+const ListHero: React.FC<ListHeroProps> = ({ 
+  title, 
+  subtitle, 
+  showFilters = false,
+  onSearch,
+  searchPlaceholder = "Search articles...",
+  children
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedCategory, setSelectedCategory] = useState<Category>(categoriesData[0]);
   const [selectedSubCategory, setSelectedSubCategory] = useState<SubCategory>("All");
 
   useGSAP(() => {
-    // ... (GSAP animation logic remains the same)
     const elementsToAnimate = [".hero-title", ".hero-subtitle", ".hero-search-filter-wrapper"];
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
@@ -60,19 +67,17 @@ const ListHero: React.FC<ListHeroProps> = ({ title, subtitle, showFilters = fals
     return () => ctx.revert();
   }, { scope: containerRef });
 
-  // Update handlers for Shadcn DropdownMenuRadioGroup
   const handleCategoryChange = (value: string) => {
     const categoryName = value;
     const newCategory = categoriesData.find(cat => cat.name === categoryName) || categoriesData[0];
     setSelectedCategory(newCategory);
-    setSelectedSubCategory("All"); // Reset subcategory
+    setSelectedSubCategory("All"); 
   };
 
   const handleSubCategoryChange = (value: string) => {
     setSelectedSubCategory(value as SubCategory);
   };
 
-  // Helper function to style the trigger button
   const getTriggerStyle = () => `
     h-11 px-4 rounded-[4px] text-sm font-medium
     bg-white/90 hover:bg-white/100 text-gray-800
@@ -82,15 +87,13 @@ const ListHero: React.FC<ListHeroProps> = ({ title, subtitle, showFilters = fals
     flex items-center justify-between gap-2 min-w-[120px]
   `;
 
-
   return (
     <div
       ref={containerRef}
-className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] pt-28 pb-16 md:pt-32 md:pb-20 text-white overflow-hidden"
+      className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] pt-28 pb-16 md:pt-32 md:pb-20 text-white overflow-hidden"
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 z-0 opacity-[0.07]">
-         {/* ... svg pattern ... */}
          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="pattern-lines" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="10" stroke="white" strokeWidth="1"/></pattern></defs><rect x="0" y="0" width="100%" height="100%" fill="url(#pattern-lines)"></rect></svg>
       </div>
 
@@ -107,41 +110,46 @@ className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] pt-2
         </p>
 
         {/* --- Wrapper for Search + Filters --- */}
-        <div className="hero-search-filter-wrapper max-w-4xl mx-auto opacity-0">
-          {/* FIX: Changed sm:flex-row to md:flex-row */}
-          <div className={`flex flex-col md:flex-row items-center gap-4 ${showFilters ? 'justify-center' : 'justify-center'}`}>
+        <div className="hero-search-filter-wrapper max-w-3xl mx-auto opacity-0">
+          {/* UPDATED: Search Box Container style (Light Blue Box) */}
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 bg-gray-500/50 p-4 rounded-lg border border-blue-100/50 shadow-xl backdrop-blur-sm">
 
             {/* --- SEARCH BAR --- */}
-            {/* FIX: Changed sm: classes to md: classes to match parent */}
-            <div className={`relative w-full ${showFilters ? 'md:w-auto md:flex-grow' : 'md:w-3/5 lg:max-w-lg'}`}>
+            <div className="relative w-full flex-grow">
               <label htmlFor="hero-search-input" className="sr-only">
-                Search articles
+                {searchPlaceholder}
               </label>
+              {/* UPDATED: Input style (White bg, Primary Text) */}
               <input
                 type="search"
                 id="hero-search-input"
-                placeholder="Search articles..."
-                className="w-full h-11 pl-10 pr-4 rounded-[4px] text-sm text-gray-800 bg-white/90 backdrop-blur-sm shadow-md focus:outline-none focus:ring-2 focus:ring-white/80 transition"
-                style={{ fontFamily: 'var(--font-inter)', fontWeight: 400 }}
+                placeholder={searchPlaceholder}
+                onChange={(e) => onSearch?.(e.target.value)}
+                className="w-full h-11 pl-10 pr-4 rounded-md text-sm text-primary placeholder:text-gray-400 bg-white border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/30 transition-all shadow-sm"
+                style={{ fontFamily: 'var(--font-inter)' }}
               />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+              {/* Updated icon color for white background */}
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/60 pointer-events-none" />
             </div>
 
-            {/* --- FILTER DROPDOWNS --- */}
-            {showFilters && (
-              <div className="flex items-center gap-3 flex-shrink-0">
+            {/* --- CUSTOM CHILDREN (e.g. M&A Buttons) --- */}
+            {children && (
+              <div className="flex items-center gap-2 flex-shrink-0 w-full md:w-auto">
+                {children}
+              </div>
+            )}
 
-                {/* === Category Dropdown (Shadcn UI) === */}
+            {/* --- DEFAULT FILTERS (Fallback for News Page) --- */}
+            {!children && showFilters && (
+              <div className="flex items-center gap-3 flex-shrink-0 w-full md:w-auto">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    {/* Use Button component or a styled button */}
                      <button className={getTriggerStyle()} style={{ fontFamily: 'var(--font-inter)' }}>
                        {selectedCategory.name}
                        <ChevronDown className="w-4 h-4 opacity-50 flex-shrink-0" />
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56 bg-white rounded-md shadow-lg" align="start">
-                    {/* Radio group to manage selection */}
                     <DropdownMenuRadioGroup value={selectedCategory.name} onValueChange={handleCategoryChange}>
                       {categoriesData.map(cat => (
                         <DropdownMenuRadioItem key={cat.name} value={cat.name} className="cursor-pointer text-sm">
@@ -152,7 +160,6 @@ className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] pt-2
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                {/* === Sub-Category Dropdown (Shadcn UI) === */}
                  <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                      <button className={getTriggerStyle()} style={{ fontFamily: 'var(--font-inter)' }}>
@@ -170,10 +177,8 @@ className="relative bg-gradient-to-br from-primary via-primary to-[#000b2c] pt-2
                     </DropdownMenuRadioGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
-
               </div>
             )}
-            {/* --- End Filters --- */}
 
           </div>
         </div>
