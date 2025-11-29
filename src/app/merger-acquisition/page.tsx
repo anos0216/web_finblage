@@ -1,36 +1,29 @@
 import React from 'react';
-import { getMergerAcquisitions } from '@/lib/dataService';
-import Pagination from '@/components/shared/Pagination';
-import AnimatedArticleCard from '@/components/shared/AnimatedArticleCard';
-import ListHero from '@/components/shared/ListHero'; // 1. Import
+// import { getMergerAcquisitions } from '@/lib/dataService'; // Not used for dummy table
+// import Pagination from '@/components/shared/Pagination'; // Not used for dummy table
+// import AnimatedArticleCard from '@/components/shared/AnimatedArticleCard'; // Removed
+import ListHero from '@/components/shared/ListHero';
+import { MergerTable } from '@/components/merger/MergerTable';
 
-export default async function MergerAcquisitionPage({ searchParams }: { searchParams: { page?: string } }) {
-    const page = Number(searchParams?.page) || 0;
-    const { dataItems: articles, pagingMetadata } = await getMergerAcquisitions(page);
+export default async function MergerAcquisitionPage() {
+    // For now, we are using dummy data inside MergerTable, so we don't fetch from API
+    // const { dataItems: articles, pagingMetadata } = await getMergerAcquisitions(page);
 
     return (
       <>
         <ListHero 
           title="Mergers & Acquisitions"
-          subtitle="Comprehensive coverage of the latest deals, corporate restructuring, and market consolidation."
+          subtitle="Real-time tracking of global M&A deals, corporate restructuring, and market consolidation events."
+          showFilters={false} // Table has its own filters
         />
-        <div className="bg-gray-50">
-            <main className="container mx-auto px-4 py-16">
-                {/* Old header removed */}
-
-                {articles.length > 0 ? (
-                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {articles.map(article => <AnimatedArticleCard key={article.id} item={article} basePath="/merger-acquisition" />)}
-                    </div>
-                ) : (
-                    <div className="text-center py-12"><p className="text-gray-500 text-lg">No M&A news found.</p></div>
-                )}
-
-                <Pagination
-                    currentPage={page}
-                    hasNextPage={pagingMetadata?.hasNext ?? false}
-                    basePath="/merger-acquisition"
-                />
+        <div className="bg-gray-50 min-h-screen">
+            <main className="container mx-auto px-4 py-12">
+                {/* The user requested the table to be below the hero section.
+                   We embed the Client Component here.
+                */}
+                <div className="flex flex-col gap-6">
+                    <MergerTable />
+                </div>
             </main>
         </div>
       </>
