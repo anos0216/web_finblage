@@ -8,15 +8,13 @@ import { ArticleDetailHero } from "@/components/detail/ArticleDetailHero";
 import { ArticleMainContent } from "@/components/detail/ArticleMainContent";
 import { ArticleSidebar } from "@/components/detail/ArticleSidebar";
 import { ArticleDetailSkeleton } from "@/components/detail/ArticleDetailSkeleton";
-import { getMergerAcquisitionItem } from "@/lib/dataService"; // Import direct fetcher
+import { getMergerAcquisitionItem } from "@/lib/dataService"; 
 
-// --- Helper to parse the HTML string from the API ---
 const extractFromHtml = (htmlString: string, key: string): string => {
   if (!htmlString || typeof htmlString !== 'string') return "";
   const regex = new RegExp(`${key}\\s*:\\s*<\\/strong>\\s*([^<]+)`, "i");
   const match = htmlString.match(regex);
   if (match && match[1]) {
-    // Remove &nbsp; and trim whitespace
     return match[1].replace(/&nbsp;/g, ' ').trim();
   }
   return "";
@@ -31,62 +29,54 @@ export default function ArticleDetailPage() {
 
   const {
     getItemBySlug,
-    mergerAcquisitions, // This only has Page 1 data
+    mergerAcquisitions, 
     isLoading: isContextLoading,
     fetchInitialData,
   } = useData();
 
-  // Local state to hold the specific item if it's fetched directly
   const [fetchedItem, setFetchedItem] = useState<ArticleItem | null>(null);
   const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
-    // 1. Try to get item from Context (fastest)
     const contextItem = getItemBySlug(slug, itemType) as ArticleItem | undefined;
 
     if (contextItem) {
       setFetchedItem(contextItem);
       setIsFetching(false);
     } else {
-      // 2. If not in Context (e.g. from Page 2), fetch directly from API
+      // Fetch directly if not in context (e.g. on refresh or deep link)
       const loadSpecificItem = async () => {
         try {
           const response = await getMergerAcquisitionItem(slug);
           if (response && response.dataItem) {
             setFetchedItem(response.dataItem);
           } else {
-            // Handle 404 specifically if needed, or leave null to trigger notFound()
             setFetchedItem(null); 
           }
         } catch (error) {
           console.error("Error fetching detail item:", error);
+          setFetchedItem(null);
         } finally {
           setIsFetching(false);
         }
       };
-      
       loadSpecificItem();
     }
 
-    // Ensure sidebar data is loaded
     if (mergerAcquisitions.length === 0) {
       fetchInitialData();
     }
   }, [slug, getItemBySlug, mergerAcquisitions.length, fetchInitialData]);
 
-  // Show skeleton while figuring out data
-  if (isFetching || isContextLoading && mergerAcquisitions.length === 0) {
+  if (isFetching || (isContextLoading && mergerAcquisitions.length === 0)) {
     return <ArticleDetailSkeleton />;
   }
 
-  // Determine final item to display
-  const articleItem = fetchedItem;
-
-  if (!articleItem) {
+  if (!fetchedItem) {
     notFound();
   }
 
-  const article = articleItem.data;
+  const article = fetchedItem.data;
   const dateValue = article.date || article.coursePrice;
   const data = article as any; 
 
@@ -96,7 +86,7 @@ export default function ArticleDetailPage() {
   const cleanStatus = extractFromHtml(rawHtml, "Deal Status");
 
   const otherArticles = mergerAcquisitions
-    .filter((item) => item.id !== articleItem.id)
+    .filter((item) => item.id !== fetchedItem.id)
     .slice(0, 5);
 
   return (
@@ -106,8 +96,7 @@ export default function ArticleDetailPage() {
         category={cleanDealType ? undefined : article.category}
         date={dateValue!}
         imageUrl={article.image}
-        itemId={articleItem.id}
-        
+        itemId={fetchedItem.id}
         dealType={cleanDealType || data.subCategory?.[0] || "Acquisition"}
         dealStatus={cleanStatus || "Pending"} 
         estimatedValue={cleanValue || data.subtitle}
@@ -116,9 +105,9 @@ export default function ArticleDetailPage() {
       <div className="bg-gray-50 pt-[214px] pb-12 md:pt-40">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-            <ArticleMainContent item={articleItem} />
+            <ArticleMainContent item={fetchedItem} />
             <ArticleSidebar
-              currentItemId={articleItem.id}
+              currentItemId={fetchedItem.id}
               allItemsForTrending={mergerAcquisitions}
               title={sidebarTitle}
               items={otherArticles}

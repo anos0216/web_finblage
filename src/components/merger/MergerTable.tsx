@@ -24,7 +24,6 @@ type DealStatus = "Completed" | "Pending" | "Announced" | "Rumor" | "Rejected";
 
 interface MergerDeal {
   id: string;
-  slug?: string;
   targetCompany: string;
   targetTicker?: string;
   acquirerCompany: string;
@@ -50,12 +49,7 @@ const extractFromHtml = (htmlString: string, key: string): string => {
 // --- Helper: Clean Status Text ---
 const cleanStatusText = (status: string): DealStatus => {
   if (!status) return "Pending";
-  
-  // Split by common separators: (, ;, :, -, ,) to truncate long statuses
-  // Example: "Completed (subject to...)" -> "Completed"
-  // Example: "Announced: pending vote" -> "Announced"
   const clean = status.split(/[\(\:;,-]/)[0].replace(/&nbsp;/g, ' ').trim();
-  
   return clean as DealStatus;
 };
 
@@ -67,7 +61,6 @@ const parseTitle = (title: string) => {
     " to Acquire ",
     " Merges with "
   ];
-  
   for (const pattern of patterns) {
     if (title.includes(pattern)) {
       const parts = title.split(pattern);
@@ -83,7 +76,6 @@ const parseTitle = (title: string) => {
 // --- Helper Components ---
 const StatusBadge = ({ status }: { status: string }) => {
   let styleClass = "bg-gray-50 text-gray-700 border-gray-200";
-  
   if (status.includes("Completed")) styleClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
   else if (status.includes("Pending")) styleClass = "bg-amber-50 text-amber-700 border-amber-200";
   else if (status.includes("Announced")) styleClass = "bg-blue-50 text-primary border-blue-200";
@@ -93,28 +85,22 @@ const StatusBadge = ({ status }: { status: string }) => {
   return (
     <span
       className={cn(
-        "px-2.5 py-1 rounded-[4px] text-[11px] uppercase tracking-wider font-bold border shadow-sm whitespace-nowrap",
+        "px-2.5 py-1 rounded-[4px] text-[11px] uppercase tracking-wider font-bold border shadow-sm whitespace-nowrap truncate block max-w-full",
         styleClass
       )}
       style={{ fontFamily: 'var(--font-inter)' }}
+      title={status}
     >
       {status}
     </span>
   );
 };
 
-// --- Skeleton Component ---
 const TableRowSkeleton = () => (
   <tr className="animate-pulse border-b border-gray-100">
     <td className="px-6 py-4"><div className="h-4 w-20 bg-gray-200 rounded"></div></td>
-    <td className="px-6 py-4">
-      <div className="h-4 w-32 bg-gray-200 rounded mb-2"></div>
-      <div className="h-3 w-12 bg-gray-100 rounded"></div>
-    </td>
-    <td className="px-6 py-4">
-      <div className="h-4 w-28 bg-gray-200 rounded mb-2"></div>
-      <div className="h-3 w-12 bg-gray-100 rounded"></div>
-    </td>
+    <td className="px-6 py-4"><div className="h-4 w-48 bg-gray-200 rounded mb-2"></div><div className="h-3 w-16 bg-gray-100 rounded"></div></td>
+    <td className="px-6 py-4"><div className="h-4 w-32 bg-gray-200 rounded mb-2"></div><div className="h-3 w-12 bg-gray-100 rounded"></div></td>
     <td className="px-6 py-4"><div className="h-4 w-20 bg-gray-200 rounded"></div></td>
     <td className="px-6 py-4"><div className="h-4 w-16 bg-gray-200 rounded"></div></td>
     <td className="px-6 py-4"><div className="h-6 w-20 bg-gray-200 rounded-full"></div></td>
@@ -122,7 +108,6 @@ const TableRowSkeleton = () => (
   </tr>
 );
 
-// --- Main Component ---
 interface MergerTableProps {
   searchTerm: string;
   realData?: ArticleItem[]; 
@@ -139,54 +124,34 @@ export const MergerTable = ({
   hasNextPage 
 }: MergerTableProps) => {
   const router = useRouter();
-  
-  const [sortConfig, setSortConfig] = useState<{
-    key: keyof MergerDeal;
-    direction: "asc" | "desc";
-  } | null>(null);
+  const [sortConfig, setSortConfig] = useState<{ key: keyof MergerDeal; direction: "asc" | "desc" } | null>(null);
 
-  // --- Map Real Data ---
   const data: MergerDeal[] = useMemo(() => {
     if (realData && realData.length > 0) {
       return realData.map((item, index) => {
         const d = item.data as any;
         const dealTypeHtml = d.dealType || "";
         const title = d.title || "";
-
         const extractedValue = extractFromHtml(dealTypeHtml, "Estimated Value");
         const rawStatus = extractFromHtml(dealTypeHtml, "Deal Status");
-        
         const { acquirer, target } = parseTitle(title);
-
-        let slug = item.id;
-        const linkField = d['link-merger-aquisition-title'];
-        if (linkField) {
-            const parts = linkField.split('/');
-            const lastPart = parts.pop();
-            if (lastPart) slug = lastPart;
-        }
-
-        // Using placeholder lists only for visual variety in the table layout demo
-        // In production, these should come from the API if available
         const dummySectors = ["Industrial", "Technology", "Consumer Goods", "Energy", "Financials"];
         const dummyTickers = ["NSE: TATA", "NSE: NUVOCO", "NSE: RELIANCE", "NSE: HDFC"];
         
         return {
           id: item.id,
-          slug: slug,
           targetCompany: target,
           targetTicker: "", 
           acquirerCompany: acquirer,
           acquirerTicker: dummyTickers[index % dummyTickers.length], 
           dealSize: extractedValue || "Undisclosed",
           status: cleanStatusText(rawStatus),
-          fullStatusText: rawStatus,
           date: d.date || new Date().toISOString(),
           sector: dummySectors[index % dummySectors.length], 
         };
       });
     }
-    return []; // No dummy data fallback
+    return [];
   }, [realData]);
 
   const handleSort = (key: keyof MergerDeal) => {
@@ -203,7 +168,6 @@ export const MergerTable = ({
 
   const processedData = useMemo(() => {
     let processed = [...data];
-
     if (searchTerm) {
       const lowerTerm = searchTerm.toLowerCase();
       processed = processed.filter(
@@ -213,7 +177,6 @@ export const MergerTable = ({
           deal.sector.toLowerCase().includes(lowerTerm)
       );
     }
-
     if (sortConfig) {
       processed.sort((a, b) => {
         const aValue = a[sortConfig.key];
@@ -224,24 +187,17 @@ export const MergerTable = ({
         return 0;
       });
     }
-
     return processed;
   }, [data, searchTerm, sortConfig]);
 
   const SortIcon = ({ columnKey }: { columnKey: keyof MergerDeal }) => {
-    if (sortConfig?.key !== columnKey)
-      return <ArrowUpDown className="w-3 h-3 ml-1 text-primary/30 opacity-0 group-hover:opacity-100 transition-opacity" />;
-    return sortConfig.direction === "asc" ? (
-      <ArrowUp className="w-3 h-3 ml-1 text-accent" /> 
-    ) : (
-      <ArrowDown className="w-3 h-3 ml-1 text-accent" />
-    );
+    if (sortConfig?.key !== columnKey) return <ArrowUpDown className="w-3 h-3 ml-1 text-primary/30 opacity-0 group-hover:opacity-100 transition-opacity" />;
+    return sortConfig.direction === "asc" ? <ArrowUp className="w-3 h-3 ml-1 text-accent" /> : <ArrowDown className="w-3 h-3 ml-1 text-accent" />;
   };
 
-  // Define columns with specific widths for the "perfect" look
   const columns = [
     { label: "Announced Date", key: "date", width: "w-[12%]" },
-    { label: "Target", key: "targetCompany", width: "w-[30%]" }, // Most width
+    { label: "Target", key: "targetCompany", width: "w-[30%]" },
     { label: "Acquirer", key: "acquirerCompany", width: "w-[20%]" },
     { label: "Sector", key: "sector", width: "w-[10%]" },
     { label: "Deal Value", key: "dealSize", width: "w-[12%]" },
@@ -253,162 +209,61 @@ export const MergerTable = ({
     <div className="w-full space-y-4 font-sans">
       <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
-          {/* IMPORTANT: table-fixed is required for width percentages to work strictly */}
           <table className="w-full text-sm text-left table-fixed min-w-[1000px]">
             <thead>
               <tr className="bg-primary text-white">
                 {columns.map((col) => (
-                  <th
-                    key={col.key}
-                    className={cn(
-                      "px-6 py-4 text-xs font-semibold uppercase tracking-wider select-none border-b border-white/10 truncate",
-                      col.width // Apply width classes here
-                    )}
-                    style={{ fontFamily: 'var(--font-inter)' }}
-                  >
+                  <th key={col.key} className={cn("px-6 py-4 text-xs font-semibold uppercase tracking-wider select-none border-b border-white/10 truncate", col.width)} style={{ fontFamily: 'var(--font-inter)' }}>
                     {col.key !== "actions" ? (
-                      <div
-                        className="flex items-center cursor-pointer group hover:text-accent transition-colors"
-                        onClick={() => handleSort(col.key as keyof MergerDeal)}
-                      >
+                      <div className="flex items-center cursor-pointer group hover:text-accent transition-colors" onClick={() => handleSort(col.key as keyof MergerDeal)}>
                         {col.label}
                         <SortIcon columnKey={col.key as keyof MergerDeal} />
                       </div>
-                    ) : (
-                      <span className="sr-only">Actions</span>
-                    )}
+                    ) : <span className="sr-only">Actions</span>}
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {isLoading ? (
-                // Show Skeleton Rows
                 Array.from({ length: 8 }).map((_, i) => <TableRowSkeleton key={i} />)
               ) : processedData.length > 0 ? (
                 processedData.map((deal, index) => (
-                  <tr
-                    key={deal.id}
-                    onClick={() => router.push(`/merger-acquisition/${deal.slug}`)}
-                    className={cn(
-                        "transition-colors group cursor-pointer",
-                        index % 2 === 0 ? "bg-white" : "bg-blue-50/20",
-                        "hover:bg-blue-50/60"
-                    )}
-                  >
-                    {/* Date */}
+                  <tr key={deal.id} onClick={() => router.push(`/merger-acquisition/${deal.id}`)} className={cn("transition-colors group cursor-pointer", index % 2 === 0 ? "bg-white" : "bg-blue-50/20", "hover:bg-blue-50/60")}>
                     <td className="px-6 py-4 truncate">
                       <div className="flex items-center text-gray-600">
                         <Calendar className="w-3.5 h-3.5 mr-2 text-primary/40 flex-shrink-0" />
-                        <span className="font-medium truncate" style={{ fontFamily: 'var(--font-inter)' }}>
-                            {new Date(deal.date).toLocaleDateString("en-US", {
-                                month: "short", day: "numeric", year: "numeric",
-                            })}
-                        </span>
+                        <span className="font-medium truncate" style={{ fontFamily: 'var(--font-inter)' }}>{new Date(deal.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
                       </div>
                     </td>
-
-                    {/* Target */}
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="font-bold text-primary text-[15px] truncate block" style={{ fontFamily: 'var(--font-oxygen)' }}>
-                          {deal.targetCompany}
-                        </span>
-                        {deal.targetTicker && (
-                          <span className="text-[11px] text-gray-400 font-semibold tracking-wide truncate block">
-                            {deal.targetTicker}
-                          </span>
-                        )}
+                        <span className="font-bold text-primary text-[15px] truncate block" style={{ fontFamily: 'var(--font-oxygen)' }}>{deal.targetCompany}</span>
+                        {deal.targetTicker && <span className="text-[11px] text-gray-400 font-semibold tracking-wide truncate block">{deal.targetTicker}</span>}
                       </div>
                     </td>
-
-                    {/* Acquirer */}
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="font-medium text-gray-700 truncate block" style={{ fontFamily: 'var(--font-oxygen)' }}>
-                          {deal.acquirerCompany}
-                        </span>
-                        {deal.acquirerTicker && (
-                          <span className="text-[11px] text-gray-400 font-medium truncate block">
-                            {deal.acquirerTicker}
-                          </span>
-                        )}
+                        <span className="font-medium text-gray-700 truncate block" style={{ fontFamily: 'var(--font-oxygen)' }}>{deal.acquirerCompany}</span>
+                        {deal.acquirerTicker && <span className="text-[11px] text-gray-400 font-medium truncate block">{deal.acquirerTicker}</span>}
                       </div>
                     </td>
-
-                     {/* Sector */}
-                    <td className="px-6 py-4 truncate">
-                         <span className="inline-flex items-center px-2.5 py-1 rounded bg-slate-100 text-xs font-medium text-slate-600 border border-slate-200 truncate max-w-full">
-                            {deal.sector}
-                         </span>
-                    </td>
-
-                    {/* Deal Size */}
-                    <td className="px-6 py-4 truncate">
-                        <span className="font-mono font-bold text-primary text-sm truncate block" title={deal.dealSize}>
-                            {deal.dealSize}
-                        </span>
-                    </td>
-
-                    {/* Status */}
-                    <td className="px-6 py-4 truncate">
-                      <StatusBadge status={deal.status} />
-                    </td>
-
-                    {/* Actions */}
-                    <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-primary hover:bg-blue-100/50">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-40 border-blue-100">
-                          <DropdownMenuItem>View Details</DropdownMenuItem>
-                          <DropdownMenuItem>Company Profile</DropdownMenuItem>
-                          <DropdownMenuItem>Related News</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </td>
+                    <td className="px-6 py-4 truncate"><span className="inline-flex items-center px-2.5 py-1 rounded bg-slate-100 text-xs font-medium text-slate-600 border border-slate-200 truncate max-w-full">{deal.sector}</span></td>
+                    <td className="px-6 py-4 truncate"><span className="font-mono font-bold text-primary text-sm truncate block" title={deal.dealSize}>{deal.dealSize}</span></td>
+                    <td className="px-6 py-4 truncate"><StatusBadge status={deal.status} /></td>
                   </tr>
                 ))
               ) : (
-                <tr>
-                  <td colSpan={7} className="px-6 py-16 text-center text-gray-500 bg-gray-50/30">
-                    <p className="font-medium text-gray-600">No deals found.</p>
-                  </td>
-                </tr>
+                <tr><td colSpan={7} className="px-6 py-16 text-center text-gray-500 bg-gray-50/30"><p className="font-medium text-gray-600">No deals found.</p></td></tr>
               )}
             </tbody>
           </table>
         </div>
-        
-        {/* Footer */}
         <div className="bg-gray-50 border-t border-gray-200 px-6 py-4 flex items-center justify-between">
-            <p className="text-sm text-gray-500 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>
-                {!isLoading && (
-                  <>Showing <span className="text-primary font-bold">{processedData.length}</span> deals</>
-                )}
-            </p>
+            <p className="text-sm text-gray-500 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>{!isLoading && <>Showing <span className="text-primary font-bold">{processedData.length}</span> deals</>}</p>
             <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage <= 1 || isLoading} // Fixed logic: disabled if on Page 1
-                  className="h-8 text-xs bg-white"
-                >
-                  Previous
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={!hasNextPage || isLoading}
-                  className="h-8 text-xs text-primary hover:bg-primary hover:text-white transition-all shadow-sm"
-                >
-                  Next
-                </Button>
+                <Button variant="outline" size="sm" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage <= 1 || isLoading} className="h-8 text-xs bg-white">Previous</Button>
+                <Button variant="outline" size="sm" onClick={() => handlePageChange(currentPage + 1)} disabled={!hasNextPage || isLoading} className="h-8 text-xs text-primary hover:bg-primary hover:text-white transition-all shadow-sm">Next</Button>
             </div>
         </div>
       </div>
