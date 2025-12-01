@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { TextPlugin } from "gsap/TextPlugin"; // Import TextPlugin
+import { Search } from "lucide-react"; // Import Search icon
 
 // Register the plugin
 gsap.registerPlugin(TextPlugin);
@@ -244,7 +245,7 @@ const Hero = () => {
       {/* --- NEW Content Layout --- */}
       <div className="container flex flex-col mx-auto px-4 relative z-10">
         {/* Grid for the 4 quotes */}
-        <div className="hero-quote-grid mx-auto opacity-0">
+        <div className="hero-quote-grid mx-auto opacity-0 w-full">
           {quotes.map((quote, index) => (
             <AnimatedQuote key={index} staticText={quote.staticText} />
           ))}
@@ -254,10 +255,30 @@ const Hero = () => {
           >
             Research That Empowers Your Investments
           </h1>
-          <h2  style={{fontFamily: "var(--font-inter)"}} className="text-center md:text-2xl text-gray-200 text-xl md:w-[70%] mx-auto">
+          <h2  style={{fontFamily: "var(--font-inter)"}} className="text-center md:text-2xl text-gray-200 text-xl md:w-[70%] mx-auto mb-8">
             Empowering Investors with In-Depth Research, Actionable Insights,
-            and Market Clarity
+            and Market Clarity
           </h2>
+
+          {/* --- SEARCH BAR SECTION --- */}
+          <div className="max-w-3xl mx-auto w-full">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 bg-gray-500/50 p-4 rounded-lg border border-blue-100/50 shadow-xl backdrop-blur-sm">
+              <div className="relative w-full flex-grow">
+                <label htmlFor="home-search-input" className="sr-only">
+                  Search
+                </label>
+                <input
+                  type="search"
+                  id="home-search-input"
+                  placeholder="Stocks , article, news etc"
+                  className="w-full h-11 pl-10 pr-4 rounded-md text-sm text-primary placeholder:text-gray-400 bg-white border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/30 transition-all shadow-sm"
+                  style={{ fontFamily: 'var(--font-inter)' }}
+                />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/60 pointer-events-none" />
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
