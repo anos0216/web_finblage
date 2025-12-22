@@ -255,7 +255,10 @@ const Hero = () => {
           >
             Research That Empowers Your Investments
           </h1>
-          <h2  style={{fontFamily: "var(--font-inter)"}} className="text-center md:text-2xl text-gray-200 text-xl md:w-[70%] mx-auto mb-8">
+          <h2
+            style={{ fontFamily: "var(--font-inter)" }}
+            className="text-center md:text-2xl text-gray-200 text-xl md:w-[70%] mx-auto mb-8"
+          >
             Empowering Investors with In-Depth Research, Actionable Insights,
             and Market Clarity
           </h2>
@@ -272,13 +275,12 @@ const Hero = () => {
                   id="home-search-input"
                   placeholder="Stocks , article, news etc"
                   className="w-full h-11 pl-10 pr-4 rounded-md text-sm text-primary placeholder:text-gray-400 bg-white border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/30 transition-all shadow-sm"
-                  style={{ fontFamily: 'var(--font-inter)' }}
+                  style={{ fontFamily: "var(--font-inter)" }}
                 />
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/60 pointer-events-none" />
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
