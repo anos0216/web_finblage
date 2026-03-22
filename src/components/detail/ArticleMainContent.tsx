@@ -1,5 +1,5 @@
 import React from "react";
-import { NewsItem, ArticleItem } from "@/types/finblage"; 
+import { NewsItem, ArticleItem, RichTextNode } from "@/types/finblage"; 
 import RichTextRenderer from "@/components/shared/RichTextRenderer"; 
 
 interface ArticleMainContentProps {
@@ -33,9 +33,9 @@ export const ArticleMainContent: React.FC<ArticleMainContentProps> = ({
 
         {/* Main Content */}
         <div className="prose prose-lg max-w-none text-gray-800">
-          {isNews ? (
-            // Render plain text for News
-            (body as string)
+          {isNews && typeof body === "string" ? (
+            // Render plain text for News if it's a string
+            body
               .split("\n\n")
               .map(
                 (paragraph, index) =>
@@ -51,9 +51,12 @@ export const ArticleMainContent: React.FC<ArticleMainContentProps> = ({
                     </p>
                   )
               )
+          ) : body ? (
+            // Render rich text for other Articles or if News body is rich text
+            <RichTextRenderer content={body as RichTextNode} /> 
           ) : (
-            // Render rich text for other Articles
-            <RichTextRenderer content={body} /> 
+            // Fallback for missing body content
+            <p className="text-gray-500 italic">No content available.</p>
           )}
         </div>
       </article>

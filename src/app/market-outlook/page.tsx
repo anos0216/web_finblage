@@ -4,8 +4,13 @@ import Pagination from '@/components/shared/Pagination';
 import AnimatedArticleCard from '@/components/shared/AnimatedArticleCard';
 import ListHero from '@/components/shared/ListHero'; // 1. Import
 
-export default async function MarketOutlookPage({ searchParams }: { searchParams: { page?: string } }) {
-    const page = Number(searchParams?.page) || 0;
+export default async function MarketOutlookPage({ 
+    searchParams 
+}: { 
+    searchParams: Promise<{ page?: string }> 
+}) {
+    const resolvedParams = await searchParams;
+    const page = Number(resolvedParams?.page) || 0;
     const { dataItems: articles, pagingMetadata } = await getMarketOutlook(page);
 
     return (

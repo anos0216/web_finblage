@@ -117,7 +117,7 @@ export default function NewsDetailPage() {
         title={article.richtext}
         category={article.category}
         date={article.date}
-        time={article.time.slice(0, 5)} // Pass formatted time
+        time={article.time ? article.time.slice(0, 5) : undefined} // Pass formatted time safely
         itemId={newsItem.id}
         // No imageUrl is passed, so it will use the full-width layout
       />

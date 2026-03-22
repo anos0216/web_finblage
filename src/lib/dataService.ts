@@ -42,7 +42,7 @@ async function fetchFromApi<T>(
 ): Promise<ApiListResponse<T>> {
   const url = `${API_BASE_URL}/collections/${collection}/items?limit=${ITEMS_PER_PAGE}&page=${page}`;
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { signal: AbortSignal.timeout(30000) });
     if (!response.ok) throw new Error(`Failed to fetch ${collection} list`);
     return response.json();
   } catch (error) {
@@ -64,7 +64,7 @@ async function findItemBySlug<T extends NewsItem | ArticleItem>(
 
   const url = `${API_BASE_URL}/collections/${collection}/items?slug=${encodeURIComponent(cleanedSlug)}`;
   try {
-    const response = await fetch(url, { cache: "no-store" }); 
+    const response = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(30000) }); 
     if (!response.ok) {
         if (response.status === 404) {
              return null;
@@ -94,7 +94,7 @@ async function getItemById<T extends NewsItem | ArticleItem>(
 
     const url = `${API_BASE_URL}/collections/${collection}/item/${cleanedItemId}`;
     try {
-        const response = await fetch(url, { next: { revalidate: 3600 } }); 
+        const response = await fetch(url, { next: { revalidate: 3600 }, signal: AbortSignal.timeout(30000) }); 
 
         if (!response.ok) {
              if (response.status === 404) {
@@ -164,6 +164,7 @@ export const getPortfolioNews = async (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ symbols, page, limit }),
       cache: "no-store",
+      signal: AbortSignal.timeout(30000)
     });
     if (!response.ok) {
       throw new Error(`Failed to fetch portfolio news for symbols: ${symbols.join(", ")}`);
