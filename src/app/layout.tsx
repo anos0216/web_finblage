@@ -5,7 +5,7 @@ import { Oxygen, Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
-import { DataProvider } from "@/context/DataContext";
+import { Providers } from "@/components/shared/Providers";
 import AiChatbot from "@/components/shared/AiChatbot"; // Import the chatbot
 
 const inter = Inter({
@@ -45,16 +45,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <DataProvider>
-        <body
-          className={` ${inter.variable} ${oxygen.variable} ${playfair.variable} antialiased flex flex-col min-h-screen`}
-        >
+      <body
+        className={` ${inter.variable} ${oxygen.variable} ${playfair.variable} antialiased flex flex-col min-h-screen`}
+      >
+        <Providers>
           <Navbar />
           <main className="flex-grow">{children}</main>
           <Footer />
           <AiChatbot /> {/* Add the chatbot component INSIDE DataProvider */}
-        </body>
-      </DataProvider>
+        </Providers>
+      </body>
     </html>
   );
 }

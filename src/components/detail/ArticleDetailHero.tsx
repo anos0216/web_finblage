@@ -393,7 +393,9 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({
               alt="Logo"
               height={90}
               width={140}
+              priority
               className="absolute -left-10"
+              style={{ width: "auto" }}
             />
             <a href="/" className="absolute left-[64px]">
               Finblage

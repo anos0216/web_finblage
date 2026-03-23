@@ -6,12 +6,25 @@ import gsap from "gsap";
 import MobileNav from "./MobileNav";
 import { FiMenu, FiX } from "react-icons/fi";
 import { accountMenu, groupedMenus } from "@/data/menus";
-import { usePathname } from "next/navigation"; // <-- IMPORT
-import { cn } from "@/lib/utils"; // <-- IMPORT
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { useSession, signOut } from "next-auth/react";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LogOut, User, Settings, LogIn } from "lucide-react";
+import Link from "next/link";
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const { data: session } = useSession();
 
   const { contextSafe } = useGSAP();
 
@@ -24,6 +37,8 @@ const Navbar: React.FC = () => {
     "/market-outlook",
     "/merger-acquisition",
     "/spotlight",
+    "/login",
+    "/signup",
   ];
   // Prefixes for pages that have a "Detail Hero"
   const detailHeroPrefixes = [
@@ -92,18 +107,21 @@ const Navbar: React.FC = () => {
       className={navClasses} // <-- Use the conditional classes
     >
       
-          <div className="text-2xl relative z-20 font-bold w-full flex items-center">
-            {/* --- FIX: Changed height, width, and objectFit --- */}
-            <Image
-              src={"/images/logo.png"}
-              alt="Logo"
-              height={90}
-              width={140}
-              className="absolute -left-10"
-            />
-            <a href="/" className="absolute left-[64px]">
-              Finblage
-            </a>
+          <div className="flex items-center gap-3 relative z-20">
+            <Link href="/" className="flex items-center gap-0 transition-transform duration-300 hover:scale-[1.02] group">
+              <Image
+                src={"/images/logo.png"}
+                alt="Logo"
+                height={80}
+                width={80}
+                priority
+                className="object-contain"
+                style={{ width: "auto", height: "auto" }}
+              />
+              <span className="text-2xl font-bold tracking-tight text-white drop-shadow-md -ml-8">
+                Finblage
+              </span>
+            </Link>
           </div>
 
       {/* Desktop Menu */}
@@ -161,15 +179,64 @@ const Navbar: React.FC = () => {
 
       {/* Account Link & Mobile Menu Trigger */}
       <div className="flex items-center z-20 gap-x-4">
-        <a
-          href={accountMenu.path}
-          className={cn(
-            "hidden md:block transition-colors ml-8 duration-300",
-            linkColor // <-- Use conditional color
-          )}
-        >
-          {accountMenu.name}
-        </a>
+        {session ? (
+          <div className="hidden md:block">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="cursor-pointer transition-transform hover:scale-105 active:scale-95">
+                  <Avatar className="h-9 w-9 border border-gray-200 shadow-sm">
+                    <AvatarImage src={session.user?.image || ""} alt={session.user?.name || "User"} />
+                    <AvatarFallback className="bg-emerald-500 text-white text-xs">
+                      {session.user?.name?.substring(0, 2).toUpperCase() || "FB"}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 mt-2 p-2 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border-gray-100">
+                <DropdownMenuLabel className="px-3 py-2">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-semibold leading-none">{session.user?.name}</p>
+                    <p className="text-xs leading-none text-gray-500">{session.user?.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-gray-100 mx-1" />
+                <DropdownMenuItem asChild>
+                  <Link href="/account" className="flex items-center px-3 py-2 cursor-pointer rounded-lg hover:bg-gray-50 text-gray-700 transition-colors">
+                    <User className="mr-2 h-4 w-4 text-emerald-500" />
+                    <span>Profile Info</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/settings" className="flex items-center px-3 py-2 cursor-pointer rounded-lg hover:bg-gray-50 text-gray-700 transition-colors">
+                    <Settings className="mr-2 h-4 w-4 text-gray-400" />
+                    <span>Preferences</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-gray-100 mx-1" />
+                <DropdownMenuItem 
+                  onClick={() => signOut()}
+                  className="flex items-center px-3 py-2 cursor-pointer rounded-lg hover:bg-red-50 text-red-600 transition-colors focus:bg-red-50 focus:text-red-600"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Logout</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        ) : (
+          <Link
+            href="/login"
+            className={cn(
+              "hidden md:flex items-center gap-2 px-6 py-2 rounded-xl font-semibold transition-all ml-8 duration-300 border backdrop-blur-md",
+              isOverlayRoute 
+                ? "bg-white/10 text-white border-white/20 hover:bg-white/20 hover:border-white/30" 
+                : "bg-emerald-600 text-white hover:bg-emerald-500 shadow-md shadow-emerald-500/20 border-emerald-500"
+            )}
+          >
+            <LogIn size={18} />
+            Login
+          </Link>
+        )}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className={cn(
